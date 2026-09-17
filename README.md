@@ -49,8 +49,12 @@ then view the site at  http://localhost:8000/
 
 ## Walkthrough
 
-Before you interact with the application, set a `DJANGO_SECRET_KEY` environment
-variable (a development fallback is used automatically if you don't).
+Copy `.env.example` to `.env` and fill in your own values (a development
+fallback is used automatically for anything you leave unset):
+
+```sh
+$ cp .env.example .env
+```
 
 
 ## Tests
