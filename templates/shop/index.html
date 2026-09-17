@@ -1,0 +1,112 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}ProductKrait{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'shop/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% if product_obj %}
+        {% for product in product_obj %}
+            <div class="col-md-3">
+                <div class="card">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+                    {% else %}
+                        <img src="{% static 'shop/images/no-image.png' %}" class="card-img-top" alt="بدون تصویر">
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="card-title">
+                            <a href="{% url 'shop:detail' product.id %}">{{product.title}}</a>
+                        </div>
+                        <!-- <div class="card-text">{{ product.description|safe|truncatechars:100 }}</div> -->
+                        <p class="card-text"><strong>قیمت:</strong> {{ product.price }} تومان</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            {% if product.quantity > 0 %}
+                                <form method="post" action="{% url 'shop:add_to_cart' product.id %}" class="add-to-cart-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cart-plus"></i> افزودن به سبد
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button class="btn btn-secondary btn-sm" disabled>
+                                    <i class="fas fa-times-circle"></i> ناموجود
+                                </button>
+                            {% endif %}
+                            <a href="{% url 'shop:detail' product.id %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye"></i> مشاهده
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center">
+            <h3>محصولی یافت نشد</h3>
+        </div>
+    {% endif %}
+</div>
+
+{% if product_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if product_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ product_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for i in product_obj.paginator.page_range %}
+                {% if product_obj.number == i %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ i }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if product_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ product_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if messages %}
+<!-- <script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script> -->
+{% endif %}
+{% endblock %}
+
+

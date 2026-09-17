@@ -1,0 +1,349 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}تکمیل خرید{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'shop/checkout.css' %}">
+<style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .product-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        display: block;
+        margin: -11px 0; 
+    }
+    
+    .table td {
+        vertical-align: middle;
+        padding: 0.35rem;
+        font-size: 0.85rem;
+        line-height: 28px;
+        height: 28px;
+    }
+    
+    .table th {
+        padding: 0.35rem;
+        font-size: 0.85rem;
+        background-color: #f8f9fa;
+        line-height: 28px;
+        height: 28px;
+    }
+    
+    .quantity-input {
+        width: 60px !important;
+        display: inline-block;
+        height: 28px;
+        padding: 0.2rem 0.4rem;
+        line-height: 1;
+        margin: 0;
+    }
+    
+    .btn-update, .btn-remove {
+        height: 28px;
+        line-height: 1;
+        padding: 0.15rem 0.4rem;
+        font-size: 0.8rem;
+        margin: 0;
+    }
+    
+    .product-title {
+        font-size: 0.85rem;
+        max-width: 180px;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 28px;
+        margin: 0;
+    }
+    
+    .product-price {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        line-height: 28px;
+        margin: 0;
+    }
+    
+    .card {
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-header {
+        padding: 0.5rem 0.75rem;
+        background-color: #f8f9fa;
+    }
+    
+    .card-header h5 {
+        font-size: 0.95rem;
+        margin: 0;
+    }
+    
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    .checkout-summary {
+        background-color: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+    }
+    
+    .checkout-summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.35rem;
+    }
+    
+    .checkout-summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.35rem;
+        padding-top: 0.35rem;
+        border-top: 1px solid #dee2e6;
+        font-weight: bold;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .form-control-sm {
+        height: 28px;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.85rem;
+    }
+    
+    .form-control-sm[type="textarea"] {
+        height: auto;
+    }
+    
+    .btn-checkout {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .alert {
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .empty-cart-message {
+        text-align: center;
+        padding: 2rem 0;
+    }
+    
+    .empty-cart-message i {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 0.75rem;
+    }
+    
+    .empty-cart-message h3 {
+        font-size: 1.25rem;
+    }
+    
+    .empty-cart-message p {
+        font-size: 0.9rem;
+    }
+    
+    /* Custom scrollbar for table */
+    .table-responsive {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .table-responsive::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if is_empty %}
+        <div class="empty-cart-message">
+            <i class="fas fa-shopping-cart"></i>
+            <h3 class="mb-2">سبد خرید شما خالی است</h3>
+            <p class="text-muted mb-3">برای مشاهده محصولات و افزودن آنها به سبد خرید، به صفحه ProductKrait مراجعه کنید.</p>
+            <a href="{% url 'shop:index' %}" class="btn btn-primary btn-sm">
+                مشاهده محصولات
+            </a>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Cart Items -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>سبد خرید</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px">تصویر</th>
+                                        <th>نام محصول</th>
+                                        <th style="width: 90px">قیمت</th>
+                                        <th style="width: 120px">تعداد</th>
+                                        <th style="width: 50px">عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                        <tr>
+                                            <td>
+                                                {% if item.product.image %}
+                                                    <img src="{{ item.product.image.url }}" class="product-image" alt="{{ item.product.title }}">
+                                                {% else %}
+                                                    <img src="{% static 'shop/images/no-image.png' %}" class="product-image" alt="بدون تصویر">
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'shop:detail' item.product.id %}" class="product-title">{{ item.product.title }}</a>
+                                            </td>
+                                            <td class="product-price">{{ item.product.price|floatformat:0 }} تومان</td>
+                                            <td>
+                                                <form method="post" action="{% url 'shop:update_cart' item.product.id %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <div class="d-flex align-items-center">
+                                                        <input type="number" class="form-control form-control-sm quantity-input" 
+                                                               name="quantity" value="{{ item.quantity }}" min="1">
+                                                        <button type="submit" class="btn btn-sm btn-success ms-2">
+                                                            <i class="fas fa-sync-alt"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form method="post" action="{% url 'shop:remove_from_cart' item.product.id %}" class="d-inline" 
+                                                      onsubmit="return confirm('آیا از حذف این محصول از سبد خرید اطمینان دارید؟');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shipping Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>اطلاعات ارسال</h5>
+                    </div>
+                    <div class="card-body">
+
+                        <form method="post" id="checkout-form">
+                            {% csrf_token %}
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <label for="full_name" class="form-label">نام و نام خانوادگی</label>
+                                    <input type="text" class="form-control form-control-sm" id="full_name" name="full_name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">شماره تماس</label>
+                                    <input type="tel" class="form-control form-control-sm" id="phone" name="phone" 
+                                           pattern="[0-9]*" inputmode="numeric" 
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                           required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="address" class="form-label">آدرس کامل</label>
+                                    <textarea class="form-control form-control-sm" id="address" name="address" rows="2" required></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <!-- Order Summary -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>خلاصه سفارش</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="checkout-summary">
+                            <div class="checkout-summary-item">
+                                <span>تعداد محصولات:</span>
+                                <span>{{ cart_items|length }} عدد</span>
+                            </div>
+                            <div class="checkout-summary-item">
+                                <span>جمع کل:</span>
+                                <span class="total-price">{{ total|floatformat:0 }} تومان</span>
+                            </div>
+                            <div class="checkout-summary-item">
+                                <span>هزینه ارسال:</span>
+                                <span>رایگان</span>
+                            </div>
+                            <div class="checkout-summary-total">
+                                <span>مبلغ قابل پرداخت:</span>
+                                <span>{{ total|floatformat:0 }} تومان</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" form="checkout-form" class="btn btn-primary w-100 mt-2">
+                            <i class="fas fa-credit-card"></i>
+                            ادامه فرآیند خرید
+                        </button>
+                        
+                        <a href="{% url 'shop:index' %}" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="fas fa-arrow-right"></i>
+                            بازگشت به ProductKrait
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // {% if messages %}
+    //     {% for message in messages %}
+    //         alert("{{ message }}");
+    //     {% endfor %}
+    // {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% load static %}
+{% load category_tags %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    {% block extra_css %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'shop:index' %}">
+                <img src="{% static 'shop/images/logo/productkrait-logo-transparent.png' %}" alt="ProductKrait" style="height: 45px; width: auto;">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="d-flex justify-content-between w-100 align-items-center">
+                    <div class="d-flex align-items-center">
+                        {% if categories_tree %}
+                        <li class="nav-item dropdown list-unstyled">
+                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                دسته‌بندی‌ها
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right categories-menu" aria-labelledby="categoriesDropdown" style="min-width: 300px;">
+                                <div class="container p-3">
+                                    <div class="row row-cols-2 g-2">
+                                        {% for category in categories_tree %}
+                                            <div class="col">
+                                                {% include 'shop/recursive_category_menu.html' with category=category %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="text-center">
+                                        <a href="{% url 'shop:categories' %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-list"></i> مشاهده همه دسته‌بندی‌ها
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </div>
+
+                    <form class="d-flex" action="{% url 'shop:search' %}" method="get">
+                        <div class="input-group" style="background: #4a5259; border-radius: 20px; padding: 0.375rem 1rem;">
+                            <input type="search" name="q" class="form-control" placeholder="جستجو‌ی محصولات..." aria-label="Search" style="border: none; background: transparent; color: #fff; box-shadow: none !important; outline: none !important;">
+                            <button class="btn" type="submit" style="border: none; background: transparent; padding: 0; margin-right: 0.5rem;">
+                                <i class="fas fa-search" style="color: #fff;"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="d-flex align-items-center">
+                        <li class="nav-item list-unstyled ml-2">
+                            <a id="cart" href="{% url 'shop:checkout' %}" class="btn btn-secondary">
+                                <i class="fas fa-shopping-cart"></i>
+                                سبد خرید {% if request.user.is_authenticated %}({{ active_cart.total_items|default:0 }}){% endif %}
+                            </a>
+                        </li>
+
+                        {% if user.is_authenticated %}
+                            <li class="nav-item list-unstyled">
+                                <a class="nav-link" href="{% url 'account:profile' %}">پنل کاربری</a>
+                            </li>
+                            <li class="nav-item list-unstyled">
+                                <form method="post" action="{% url 'account:logout' %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="nav-link btn btn-link" style="background: none; border: none; padding: 0;">خروج</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item list-unstyled">
+                                <a class="nav-link" href="{% url 'account:signup' %}">ثبت نام</a>
+                            </li>
+                            <li class="nav-item list-unstyled">
+                                <a class="nav-link" href="{% url 'account:login' %}">ورود</a>
+                            </li>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script type="text/javascript">
+        function updateCartCount(count) {
+            document.getElementById("cart").innerHTML = '<i class="fas fa-shopping-cart"></i> سبد خرید (' + count + ')';
+        }
+        
+        // Handle recursive nested dropdowns
+        $(document).ready(function() {
+            var timeout;
+            
+            // Show submenu on hover
+            $('.dropdown-submenu > a').on("mouseenter", function(e) {
+                clearTimeout(timeout);
+                var submenu = $(this).next('.dropdown-menu');
+                // Hide all other submenus first
+                $('.dropdown-submenu .dropdown-menu').not(submenu).hide();
+                submenu.show();
+            });
+            
+            // Keep submenu open when hovering over submenu
+            $('.dropdown-submenu .dropdown-menu').on("mouseenter", function(e) {
+                clearTimeout(timeout);
+                $(this).show();
+            });
+            
+            // Hide submenu when leaving the entire dropdown area
+            $('.dropdown-submenu').on("mouseleave", function(e) {
+                var $this = $(this);
+                timeout = setTimeout(function() {
+                    $this.find('.dropdown-menu').hide();
+                }, 200); // Longer delay to allow moving to submenu
+            });
+            
+            // Hide submenu when leaving submenu area
+            $('.dropdown-submenu .dropdown-menu').on("mouseleave", function(e) {
+                var $this = $(this);
+                timeout = setTimeout(function() {
+                    $this.hide();
+                }, 200);
+            });
+            
+            // Keep main dropdown open when hovering over it
+            $('#categoriesDropdown').on("mouseenter", function(e) {
+                clearTimeout(timeout);
+                $('.categories-menu').show();
+            });
+            
+            // Hide main dropdown when leaving the entire dropdown area
+            $('.nav-item.dropdown').on("mouseleave", function(e) {
+                timeout = setTimeout(function() {
+                    $('.categories-menu').hide();
+                    $('.dropdown-submenu .dropdown-menu').hide();
+                }, 300);
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 
