@@ -42,7 +42,7 @@
 }
 
 .payment-details {
-    background: #f8f9fa;
+    background: #f0ead6;
     border-radius: 10px;
     padding: 2rem;
     margin: 2rem 0;
@@ -168,13 +168,13 @@
 }
 
 .btn-retry {
-    background: #007bff;
-    border: 1px solid #007bff;
+    background: #1a1a1a;
+    border: 1px solid #1a1a1a;
     color: #fff;
 }
 
 .btn-retry:hover {
-    background: #0056b3;
+    background: #000000;
     border-color: #004085;
     color: #fff;
     transform: translateY(-2px);

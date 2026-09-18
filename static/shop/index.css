@@ -38,7 +38,7 @@
 
 .product-price {
     font-size: 1.1rem;
-    color: #28a745;
+    color: #1a1a1a;
     font-weight: 600;
     margin-bottom: 1rem;
 }
@@ -64,21 +64,21 @@
 }
 
 .page-link {
-    color: #28a745;
+    color: #1a1a1a;
     border-color: #dee2e6;
     padding: 0.5rem 1rem;
     margin: 0 0.2rem;
 }
 
 .page-link:hover {
-    color: #218838;
+    color: #000000;
     background-color: #e9ecef;
     border-color: #dee2e6;
 }
 
 .page-item.active .page-link {
-    background-color: #28a745;
-    border-color: #28a745;
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
 }
 
 /* Responsive Styles */
@@ -136,11 +136,11 @@
 }
 
 .card-title a:hover {
-    color: #007bff;
+    color: #1a1a1a;
 }
 
 .card-text {
-    color: #28a745;
+    color: #1a1a1a;
     font-weight: bold;
     font-size: 1.2rem;
     margin-bottom: 15px;
