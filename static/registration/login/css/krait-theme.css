@@ -1,0 +1,116 @@
+/* ProductKrait theme override for login/signup:
+   page stays cream, the card itself is black (krait snake black) with
+   cream text, and cream buttons. */
+
+body,
+.limiter,
+.container-login100 {
+    background-color: #f0ead6 !important;
+}
+
+.wrap-login100 {
+    background: linear-gradient(165deg, #232628 0%, #101214 55%, #060708 100%) !important;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+.login100-form-title {
+    color: #f0ead6;
+}
+
+.login100-form-title.myfont {
+    color: #f0ead6;
+}
+
+.wrap-input100 {
+    border-bottom: 2px solid #3a3f42;
+}
+
+.input100 {
+    color: #f0ead6 !important;
+}
+
+.focus-input100::before {
+    background: #f0ead6 !important;
+}
+
+.focus-input100::after {
+    color: #9aa3a0 !important;
+}
+
+::-webkit-input-placeholder { color: #6b7370 !important; }
+:-moz-placeholder { color: #6b7370 !important; }
+::-moz-placeholder { color: #6b7370 !important; }
+:-ms-input-placeholder { color: #6b7370 !important; }
+
+.txt1 {
+    color: #9aa3a0;
+}
+
+.txt2 {
+    background: none !important;
+    -webkit-text-fill-color: #f0ead6 !important;
+    color: #f0ead6 !important;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.txt2:hover {
+    text-decoration: underline;
+}
+
+/* Error message: small and spaced out, not a giant paragraph colliding
+   with the floating field label right under it. */
+.errors {
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: #ff9e80;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Cream button (instead of the blue/purple gradient) with a soft dark
+   sweep on hover.
+   .login100-form-bgbtn is 3x the button width, sitting at left:-100% at rest
+   (so the visible window shows the MIDDLE third of this gradient) and slides
+   to left:0 on hover (revealing the FIRST third instead). The middle third
+   stays flat cream so the button looks matte at rest; a soft shine sits in
+   the first third so it only sweeps in gently on hover. */
+.login100-form-bgbtn {
+    background: #f0ead6 !important;
+    background: linear-gradient(
+        90deg,
+        #f0ead6 0%,
+        #d8cfae 14%,
+        #fffdf4 18%,
+        #d8cfae 22%,
+        #f0ead6 32%,
+        #f0ead6 68%,
+        #f0ead6 100%
+    ) !important;
+}
+
+.login100-form-btn {
+    color: #1a1a1a;
+    letter-spacing: 0.5px;
+}
+
+/* Tighten the vertical rhythm: the vendor template's spacing utilities
+   (77px card top padding, 115px gap before the bottom link) leave far too
+   much air around the logo and under the submit button. */
+.wrap-login100 {
+    padding-top: 40px !important;
+}
+
+.login100-form-title.p-b-26 {
+    padding-bottom: 10px;
+}
+
+.login100-form-title.p-b-48 {
+    padding-bottom: 28px;
+}
+
+.text-center.p-t-115 {
+    padding-top: 25px !important;
+}

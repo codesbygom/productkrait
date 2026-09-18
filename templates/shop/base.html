@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light">
 
+    <link rel="icon" type="image/png" href="{% static 'shop/images/logo/productkrait-favicon-1x1.png' %}">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'shop/style.css' %}">
@@ -21,83 +23,75 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'shop:index' %}">
-                <img src="{% static 'shop/images/logo/productkrait-logo-transparent.png' %}" alt="ProductKrait" style="height: 90px; width: auto; max-width: none;">
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark krait-navbar">
+        <div class="container-fluid krait-navbar-row">
+            <button class="btn krait-btn-dark krait-sidebar-toggle" type="button" aria-label="Menu">
+                <i class="fas fa-bars"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="d-flex justify-content-between w-100 align-items-center">
-                    <div class="d-flex align-items-center">
-                        {% if categories_tree %}
-                        <li class="nav-item dropdown list-unstyled">
-                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Categories
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right categories-menu" aria-labelledby="categoriesDropdown" style="min-width: 300px;">
-                                <div class="container p-3">
-                                    <div class="row row-cols-2 g-2">
-                                        {% for category in categories_tree %}
-                                            <div class="col">
-                                                {% include 'shop/recursive_category_menu.html' with category=category %}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                    <hr class="my-2">
-                                    <div class="text-center">
-                                        <a href="{% url 'shop:categories' %}" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-list"></i> View all categories
-                                        </a>
-                                    </div>
+
+            {% if categories_tree %}
+            <li class="nav-item dropdown list-unstyled">
+                <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Categories
+                </a>
+                <div class="dropdown-menu dropdown-menu-right categories-menu" aria-labelledby="categoriesDropdown" style="min-width: 300px;">
+                    <div class="container p-3">
+                        <div class="row row-cols-2 g-2">
+                            {% for category in categories_tree %}
+                                <div class="col">
+                                    {% include 'shop/recursive_category_menu.html' with category=category %}
                                 </div>
-                            </div>
-                        </li>
-                        {% endif %}
-                    </div>
-
-                    <form class="d-flex" action="{% url 'shop:search' %}" method="get">
-                        <div class="input-group" style="background: #4a5259; border-radius: 20px; padding: 0.375rem 1rem;">
-                            <input type="search" name="q" class="form-control" placeholder="Search products..." aria-label="Search" style="border: none; background: transparent; color: #fff; box-shadow: none !important; outline: none !important;">
-                            <button class="btn" type="submit" style="border: none; background: transparent; padding: 0; margin-right: 0.5rem;">
-                                <i class="fas fa-search" style="color: #fff;"></i>
-                            </button>
+                            {% endfor %}
                         </div>
-                    </form>
-
-                    <div class="d-flex align-items-center">
-                        <li class="nav-item list-unstyled ml-2">
-                            <a id="cart" href="{% url 'shop:checkout' %}" class="btn btn-secondary">
-                                <i class="fas fa-shopping-cart"></i>
-                                Cart {% if request.user.is_authenticated %}({{ active_cart.total_items|default:0 }}){% endif %}
+                        <hr class="my-2">
+                        <div class="text-center">
+                            <a href="{% url 'shop:categories' %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-list"></i> View all categories
                             </a>
-                        </li>
-
-                        {% if user.is_authenticated %}
-                            <li class="nav-item list-unstyled">
-                                <a class="nav-link" href="{% url 'account:profile' %}">My Account</a>
-                            </li>
-                            <li class="nav-item list-unstyled">
-                                <form method="post" action="{% url 'account:logout' %}" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="nav-link btn btn-link" style="background: none; border: none; padding: 0;">Log out</button>
-                                </form>
-                            </li>
-                        {% else %}
-                            <li class="nav-item list-unstyled">
-                                <a class="nav-link" href="{% url 'account:signup' %}">Sign up</a>
-                            </li>
-                            <li class="nav-item list-unstyled">
-                                <a class="nav-link" href="{% url 'account:login' %}">Log in</a>
-                            </li>
-                        {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </li>
+            {% endif %}
+
+            <form class="d-flex flex-grow-1 mx-3" action="{% url 'shop:search' %}" method="get" style="min-width: 0;">
+                <div class="input-group krait-searchbar">
+                    <input type="search" name="q" class="form-control" placeholder="Search products..." aria-label="Search" style="border: none; background: transparent; box-shadow: none !important; outline: none !important;">
+                    <button class="btn" type="submit" style="border: none; background: transparent; padding: 0; margin-right: 0.5rem;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <a class="navbar-brand mb-0 krait-brand" href="{% url 'shop:index' %}">
+                <img class="krait-logo-full" src="{% static 'shop/images/logo/productkrait-navbar-logo.png' %}" alt="ProductKrait">
+                <span class="krait-logo-text">Product Krait</span>
+            </a>
         </div>
     </nav>
+
+    <div class="krait-sidebar-backdrop" id="kraitSidebarBackdrop"></div>
+    <div class="krait-sidebar" id="kraitSidebar">
+        <button class="btn krait-btn-dark krait-sidebar-close" type="button" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="krait-sidebar-links">
+            {% if user.is_authenticated %}
+                <a id="cart" href="{% url 'shop:checkout' %}" class="btn krait-btn-dark">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart {% if request.user.is_authenticated %}({{ active_cart.total_items|default:0 }}){% endif %}</span>
+                </a>
+                <a class="btn krait-btn-dark" href="{% url 'account:profile' %}">My Account</a>
+                <form method="post" action="{% url 'account:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn krait-btn-dark">Log out</button>
+                </form>
+            {% else %}
+                <a class="btn krait-btn-dark" href="{% url 'account:login' %}">Log in</a>
+                <a class="btn krait-btn-dark" href="{% url 'account:signup' %}">Sign up</a>
+            {% endif %}
+        </div>
+    </div>
 
     <div class="container mt-3">
         {% block content %}{% endblock %}
@@ -105,7 +99,10 @@
 
     <script type="text/javascript">
         function updateCartCount(count) {
-            document.getElementById("cart").innerHTML = '<i class="fas fa-shopping-cart"></i> Cart (' + count + ')';
+            var cartLink = document.getElementById("cart");
+            if (cartLink) {
+                cartLink.innerHTML = '<i class="fas fa-shopping-cart"></i> <span>Cart (' + count + ')</span>';
+            }
         }
         
         // Handle recursive nested dropdowns
@@ -157,8 +154,31 @@
                 }, 300);
             });
         });
+
+        // Cursor-tracking highlight on every button + navbar link on the page
+        document.querySelectorAll('.navbar .nav-link, .btn').forEach(function(el) {
+            el.addEventListener('mousemove', function(e) {
+                var rect = el.getBoundingClientRect();
+                el.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+                el.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+            });
+        });
+
+        // Account sidebar (hamburger menu)
+        $(document).ready(function() {
+            function openSidebar() {
+                $('#kraitSidebar').addClass('show');
+                $('#kraitSidebarBackdrop').addClass('show');
+            }
+            function closeSidebar() {
+                $('#kraitSidebar').removeClass('show');
+                $('#kraitSidebarBackdrop').removeClass('show');
+            }
+            $('.krait-sidebar-toggle').on('click', openSidebar);
+            $('.krait-sidebar-close, #kraitSidebarBackdrop').on('click', closeSidebar);
+        });
     </script>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
 </html> 

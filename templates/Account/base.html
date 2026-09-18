@@ -9,6 +9,7 @@
 
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="{% static 'shop/images/logo/productkrait-favicon-1x1.png' %}">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{% static 'registration/adminlte/plugins/fontawesome-free/css/all.min.css' %}">
   <!-- Ionicons -->
@@ -35,17 +36,37 @@
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <style>
-  .sidebar {
-    width: 280px !important;
-  }
-  .main-sidebar {
-    width: 280px !important;
-  }
-  .content-wrapper {
-    margin-left: 280px !important;
-  }
-  .main-header {
-    margin-left: 280px !important;
+  /* Only force the fixed sidebar width/offset on desktop. Below 992px this
+     was overriding AdminLTE's own off-canvas sidebar behavior with
+     !important, which is why the hamburger (pushmenu) toggle looked broken
+     on narrow screens: the content was always shoved right by 280px and
+     the sidebar never actually got out of the way. */
+  @media (min-width: 992px) {
+    .sidebar {
+      width: 280px !important;
+    }
+    .main-sidebar {
+      width: 280px !important;
+    }
+    .content-wrapper {
+      margin-left: 280px !important;
+    }
+    .main-header {
+      margin-left: 280px !important;
+    }
+
+    /* When the hamburger (pushmenu) collapses the sidebar, AdminLTE expects
+       it to shrink to an icon-only rail and the content to follow. The
+       280px rules above were unconditional and outweighed that, so the
+       "collapsed" sidebar stayed full width and just sat under the
+       content instead of visibly closing. */
+    .sidebar-collapse .main-sidebar {
+      width: 4.6rem !important;
+    }
+    .sidebar-collapse .content-wrapper,
+    .sidebar-collapse .main-header {
+      margin-left: 4.6rem !important;
+    }
   }
   .nav-sidebar .nav-item .nav-link {
     padding: 0.8rem 1rem;
@@ -54,11 +75,89 @@
   .nav-sidebar .nav-item .nav-link p {
     margin-left: 0.5rem;
   }
+
+  /* Match the krait black/cream buttons used on the rest of the site
+     instead of AdminLTE's default blue/green/red. */
+  .btn-primary,
+  .btn-secondary,
+  .btn-success,
+  .btn-danger,
+  .btn-info,
+  .btn-warning {
+    background: linear-gradient(180deg, #33383c 0%, #1c1f22 55%, #101214 100%) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+    color: #f0ead6 !important;
+    border-radius: 10px !important;
+  }
+
+  .btn-primary:hover, .btn-primary:focus,
+  .btn-secondary:hover, .btn-secondary:focus,
+  .btn-success:hover, .btn-success:focus,
+  .btn-danger:hover, .btn-danger:focus,
+  .btn-info:hover, .btn-info:focus,
+  .btn-warning:hover, .btn-warning:focus {
+    background: linear-gradient(180deg, #3d4247 0%, #24282b 55%, #16181a 100%) !important;
+    color: #f0ead6 !important;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Same black/cream krait palette as the shop navbar and the login/signup
+     cards, applied to the admin panel's topbar, sidebar and page body. */
+  .krait-admin-navbar {
+    background: linear-gradient(180deg, #131517 0%, #0a0b0c 60%, #000000 100%) !important;
+  }
+
+  .main-sidebar {
+    background: linear-gradient(180deg, #1c1f22 0%, #0a0c0e 65%, #000000 100%) !important;
+  }
+
+  /* Pin "Log out" to the true bottom of the sidebar: without the brand-link
+     row up top, the sidebar now starts at the user panel, and the nav list
+     needs to stretch the full sidebar height for mt-auto on the last item
+     to push it all the way down instead of just trailing after the menu. */
+  .krait-sidebar-flex {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .krait-sidebar-flex > nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .krait-sidebar-flex > nav > .nav-sidebar {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .content-wrapper {
+    background-color: #f0ead6 !important;
+  }
+
+  .content-wrapper .form-control {
+    background-color: #fbf7ea !important;
+    border-color: #d8cfae !important;
+    color: #1a1a1a !important;
+  }
+
+  .content-wrapper .form-control:focus {
+    background-color: #fffdf6 !important;
+    border-color: #1a1a1a !important;
+    box-shadow: none !important;
+  }
 </style>
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+  <nav class="main-header navbar navbar-expand navbar-dark krait-admin-navbar">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -76,16 +175,11 @@
     </ul>
 
     <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <!-- Messages Dropdown Menu -->
-
-      <li class="nav- ">
-        <form method="post" action="{% url 'account:logout' %}" style="display: inline;">
-          {% csrf_token %}
-          <button type="submit" class="nav-link btn btn-link" style="background: none; border: none; padding: 0;">
-            <i class="fas fa-sign-out-alt"></i>
-          </button>
-        </form>
+    <ul class="navbar-nav ml-auto align-items-center">
+      <li class="nav-item">
+        <a href="{% url 'shop:index' %}" class="nav-link py-0">
+          <img src="{% static 'shop/images/logo/productkrait-navbar-logo.png' %}" alt="ProductKrait" style="height: 40px; width: auto;">
+        </a>
       </li>
     </ul>
   </nav>

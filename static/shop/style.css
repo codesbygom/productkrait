@@ -14,10 +14,225 @@ body {
 /* Navbar Styles */
 .navbar {
     margin-bottom: 2rem;
-    height: 56px;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-top: 9px;
+    padding-bottom: 9px;
     overflow: visible;
+}
+
+.navbar > .krait-navbar-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.krait-brand {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.krait-logo-text {
+    display: none;
+    color: #f0ead6;
+    font-weight: 700;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.krait-sidebar-toggle {
+    flex-shrink: 0;
+}
+
+/* Below ~576px there isn't room for the full logo artwork next to the
+   search bar and hamburger button on one line, so swap it for compact
+   text instead of letting the row wrap or overflow. */
+@media (max-width: 576px) {
+    .krait-logo-full {
+        display: none;
+    }
+
+    .krait-logo-text {
+        display: inline-block;
+    }
+
+    .krait-sidebar-toggle {
+        padding: 0.5rem 0.7rem;
+    }
+
+    .krait-navbar-row {
+        gap: 0.35rem;
+    }
+
+    .krait-searchbar {
+        padding: 0.3rem 0.75rem;
+    }
+}
+
+/* Below ~420px even the compact text logo doesn't fit next to a usable
+   search bar, so drop the brand link entirely and let search take the row. */
+@media (max-width: 420px) {
+    .krait-brand {
+        display: none;
+    }
+
+    .krait-sidebar-toggle {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.95rem;
+    }
+
+    .krait-searchbar input.form-control {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .krait-searchbar .btn {
+        flex-shrink: 0;
+        padding-left: 0.4rem !important;
+    }
+}
+
+.krait-navbar {
+    background: linear-gradient(180deg, #131517 0%, #0a0b0c 60%, #000000 100%) !important;
+}
+
+.krait-searchbar {
+    background: #f0ead6 !important;
+    border-radius: 20px;
+    padding: 0.375rem 1rem;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.krait-searchbar input.form-control {
+    border-radius: 20px 0 0 20px !important;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.krait-searchbar button.btn {
+    flex-shrink: 0;
+}
+
+.krait-searchbar input.form-control {
+    color: #1a1a1a !important;
+}
+
+.krait-searchbar input.form-control::placeholder {
+    color: #7a7364 !important;
+}
+
+.krait-searchbar .fa-search {
+    color: #1a1a1a !important;
+}
+
+/* Cream button, for use on dark backgrounds (navbar, black cards) so it
+   reads clearly against the dark surface behind it. */
+.krait-btn-dark {
+    background: linear-gradient(180deg, #fffdf6 0%, #f0ead6 55%, #e2d9bb 100%);
+    color: #1a1a1a !important;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 2px 6px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease;
+}
+
+.krait-btn-dark:hover,
+.krait-btn-dark:focus {
+    background: linear-gradient(180deg, #ffffff 0%, #f6f0da 55%, #e9e0c4 100%);
+    color: #1a1a1a !important;
+}
+
+/* Bootstrap's default blue/green/red buttons don't belong to the krait
+   palette. These sit on light page backgrounds, so they follow the same
+   rule as the rest of the site: dark button, cream text. */
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-info,
+.btn-warning {
+    background: linear-gradient(180deg, #33383c 0%, #1c1f22 55%, #101214 100%) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+    color: #f0ead6 !important;
+}
+
+.btn-primary:hover, .btn-primary:focus,
+.btn-secondary:hover, .btn-secondary:focus,
+.btn-success:hover, .btn-success:focus,
+.btn-danger:hover, .btn-danger:focus,
+.btn-info:hover, .btn-info:focus,
+.btn-warning:hover, .btn-warning:focus {
+    background: linear-gradient(180deg, #3d4247 0%, #24282b 55%, #16181a 100%) !important;
+    color: #f0ead6 !important;
+}
+
+/* Account sidebar, opened from the hamburger button in the navbar */
+.krait-sidebar-toggle {
+    padding: 0.5rem 0.9rem;
+    font-size: 1.1rem;
+}
+
+.krait-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1040;
+}
+
+.krait-sidebar-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.krait-sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 300px;
+    height: 100vh;
+    background: linear-gradient(180deg, #1c1f22 0%, #0a0c0e 65%, #000000 100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+    transition: left 0.3s ease;
+    z-index: 1050;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.krait-sidebar.show {
+    left: 0;
+}
+
+.krait-sidebar-close {
+    margin-bottom: 2rem;
+    padding: 0.5rem 0.9rem;
+    font-size: 1rem;
+}
+
+.krait-sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    width: 100%;
+}
+
+/* Fixed-size sidebar buttons: same width/height no matter how long the
+   label is, so Cart/My Account/Log out/Log in/Sign up all line up. */
+.krait-sidebar-links .btn {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .navbar-brand {
@@ -31,6 +246,8 @@ body {
 .navbar-brand img {
     position: relative;
     z-index: 2;
+    height: 74px;
+    width: auto;
 }
 
 .navbar-nav {
@@ -46,6 +263,63 @@ body {
 
 .nav-link:hover {
     color: #f0ead6 !important;
+}
+
+/* Glossy cursor-tracking highlight, like light catching a snake's scales.
+   Every button on the site shares this: a soft glow that follows the
+   cursor while hovering. It sits at z-index:-1 so it glows on top of the
+   button's own flat background but stays behind the label/icon text. */
+.navbar .nav-link {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.navbar .nav-link::before {
+    content: "";
+    position: absolute;
+    inset: -4px -8px;
+    background: radial-gradient(60px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.35), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    border-radius: 8px;
+    z-index: -1;
+}
+
+.navbar .nav-link:hover::before {
+    opacity: 1;
+}
+
+/* Unified button shape + shine across the whole site */
+.btn {
+    border-radius: 10px !important;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(80px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.3), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+/* Cream/light buttons need a dark glint instead of a white one, or the
+   highlight all but disappears against the light background. */
+.krait-btn-dark::before,
+.btn-outline-primary::before,
+.btn-outline-secondary::before {
+    background: radial-gradient(80px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 0, 0, 0.18), transparent 70%);
 }
 
 /* Search Form Styles */
