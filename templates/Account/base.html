@@ -119,23 +119,36 @@
      row up top, the sidebar now starts at the user panel, and the nav list
      needs to stretch the full sidebar height for mt-auto on the last item
      to push it all the way down instead of just trailing after the menu. */
-  .krait-sidebar-flex {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  .krait-sidebar-logout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.5rem 0.5rem 1rem;
+    border-top: 1px solid rgba(240, 234, 214, 0.12);
+    background: #000;
   }
 
-  .krait-sidebar-flex > nav {
+  .krait-sidebar-logout .nav-link {
     display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #c2c7d0;
+    padding: 0.8rem 1rem;
   }
 
-  .krait-sidebar-flex > nav > .nav-sidebar {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+  .krait-sidebar-logout .nav-link:hover {
+    color: #f0ead6;
+  }
+
+  .krait-sidebar-logout .nav-link p {
+    margin: 0 0 0 0.5rem;
+  }
+
+  .sidebar-collapse .krait-sidebar-logout .nav-link p {
+    display: none;
   }
 
   .content-wrapper {
