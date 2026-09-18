@@ -3,9 +3,9 @@
 
 {% block title %}
 {% if request.user.is_active and request.user.is_staff %}
-مدیریت سفارشات مشتریان
+Manage Customer Orders
 {% else %}
-تاریخچه ی سفارشات
+Order History
 {% endif %}
 {% endblock %}
 
@@ -13,7 +13,7 @@
 
 
 {% block main %}
-خوش آمدید {{user.get_full_name}}
+Welcome, {{user.get_full_name}}
 <br>
 <br>
 <div class="row">
@@ -26,11 +26,11 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>نام و نام خانوادگی کاربر</th>
-                  <th>تاریخ سفارش</th>
-                  <th>وضعیت</th>
-                  <th>قیمت کل فاکتور</th>
-                  
+                  <th>Customer Name</th>
+                  <th>Order Date</th>
+                  <th>Status</th>
+                  <th>Invoice Total</th>
+
                 </tr>
               </thead>
               <tbody>
@@ -40,16 +40,16 @@
                       <td>{{order.costumer.get_full_name}}</td>
                       <td>{{order.jpublish}}</td>
                       <td >{% if order.status == "p" %}
-                        
-                          <p class="badge badge-success">در حال پردازش</p>
+
+                          <p class="badge badge-success">Processing</p>
                         {% elif order.status == "s" %}
-                          <p class="badge badge-success">ارسال شده</p>
+                          <p class="badge badge-success">Shipped</p>
                         {% else %}
-                        <p class="badge badge-success">رسیده</p>
+                        <p class="badge badge-success">Delivered</p>
                         {% endif %}
                       </td>
                       <td>{{order.total}}</td>
-                      <td><a class="btn btn-warning" href="detail/{{order.id}}/">جزییات سفارش</a></td>
+                      <td><a class="btn btn-warning" href="detail/{{order.id}}/">Order Details</a></td>
                   </tr>
                 {%endfor%}
               </tbody>
@@ -58,7 +58,7 @@
           <!-- /.card-body -->
         </div>
         {% else %}
-        <h3>محتوایی برای نمایش وجود ندارد</h3>
+        <h3>There is nothing to show</h3>
         {% endif %}
       <!-- /.card -->
     </div>

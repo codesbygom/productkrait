@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -28,12 +28,8 @@
   <link rel="stylesheet" href="{% static 'registration/adminlte/plugins/summernote/summernote-bs4.css' %}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-  <!-- Bootstrap 4 RTL -->
-  <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.2.1/css/bootstrap.min.css">
-  <!-- Custom style for RTL -->
-  <link rel="stylesheet" href="{% static 'registration/adminlte/dist/css/custom.css' %}">
 
-  <title>پنل مدیریت</title>
+  <title>Admin Panel</title>
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -45,17 +41,17 @@
     width: 280px !important;
   }
   .content-wrapper {
-    margin-right: 280px !important;
+    margin-left: 280px !important;
   }
   .main-header {
-    margin-right: 280px !important;
+    margin-left: 280px !important;
   }
   .nav-sidebar .nav-item .nav-link {
     padding: 0.8rem 1rem;
     font-size: 1rem;
   }
   .nav-sidebar .nav-item .nav-link p {
-    margin-right: 0.5rem;
+    margin-left: 0.5rem;
   }
 </style>
 <div class="wrapper">
@@ -68,18 +64,18 @@
         <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{% url 'account:profile' %}" class="nav-link">صفحه ی اصلی</a>
+        <a href="{% url 'account:profile' %}" class="nav-link">Home</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{% url 'shop:index' %}" target="_blank" class="nav-link">نمایش سایت</a>
+        <a href="{% url 'shop:index' %}" target="_blank" class="nav-link">View Site</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{% url 'account:orders' %}" class="nav-link">تاریخچه سفارشات</a>
+        <a href="{% url 'account:orders' %}" class="nav-link">Order History</a>
       </li>
     </ul>
 
     <!-- Right navbar links -->
-    <ul class="navbar-nav mr-auto-navbav">
+    <ul class="navbar-nav ml-auto">
       <!-- Messages Dropdown Menu -->
 
       <li class="nav- ">
@@ -105,7 +101,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">{% block title %}عنوان صفحه{% endblock %}</h1>
+            <h1 class="m-0 text-dark">{% block title %}Page Title{% endblock %}</h1>
           </div><!-- /.col -->
           
         </div><!-- /.row -->
@@ -145,8 +141,6 @@
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 </script>
-<!-- Bootstrap 4 rtl -->
-<script src="https://cdn.rtlcss.com/bootstrap/v4.2.1/js/bootstrap.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="{% static 'registration/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- ChartJS -->

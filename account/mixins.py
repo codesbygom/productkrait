@@ -8,7 +8,7 @@ class FieldMixins():
         if request.user.is_superuser:
             self.fields   = ["title","price","discount_price","category","description","image",]
         else:
-            raise Http404*("شما اجازه ی دیدن این صفحه را ندارید")
+            raise Http404("You are not allowed to view this page")
         return super().dispatch(request,*args ,**kwargs)
 
 
@@ -17,4 +17,4 @@ class SuperUserMixin():
         if request.user.is_superuser:
             return super().dispatch(request,*args, **kwargs)
         else:
-            raise Http404("دسترسی غیر مجاز")
+            raise Http404("Unauthorized access")

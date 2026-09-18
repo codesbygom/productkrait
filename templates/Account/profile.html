@@ -3,9 +3,9 @@
 
 {% block title %}
 {% if request.user.is_active and request.user.is_staff %}
-پروفایل کاربری
+User Profile
 {% else %}
-پروفایل کاربری
+User Profile
 {% endif %}
 {% endblock %}
 
@@ -13,12 +13,12 @@
 
 
 {% block main %}
-خوش آمدید {{user.get_full_name}}
+Welcome, {{user.get_full_name}}
     <form  method="post" ,enctype="multipart/form-data">{% csrf_token %}
 
     {{form|crispy}}
 
-    <button class="btn btn-success">تایید</button>
+    <button class="btn btn-success">Save</button>
     </form>
     <br>
 

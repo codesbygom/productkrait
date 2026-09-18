@@ -12,18 +12,18 @@ class ProductForm(forms.ModelForm):
             'quantity': forms.NumberInput(attrs={'min': 0}),
         }
         labels = {
-            'title': 'عنوان محصول',
-            'price': 'قیمت',
-            'discount_price': 'قیمت با تخفیف',
-            'category': 'دسته‌بندی',
-            'description': 'توضیحات',
-            'image': 'تصویر محصول',
-            'quantity': 'تعداد موجودی',
+            'title': 'Product title',
+            'price': 'Price',
+            'discount_price': 'Discounted price',
+            'category': 'Category',
+            'description': 'Description',
+            'image': 'Product image',
+            'quantity': 'Stock quantity',
         }
         help_texts = {
-            'discount_price': 'قیمت با تخفیف را وارد کنید (اختیاری)',
-            'category': 'دسته‌بندی‌های محصول را انتخاب کنید',
-            'description': 'توضیحات کامل محصول را وارد کنید',
-            'image': 'تصویر محصول را انتخاب کنید',
-            'quantity': 'تعداد موجودی محصول در انبار را وارد کنید',
-        } 
+            'discount_price': 'Enter the discounted price (optional)',
+            'category': 'Select the product categories',
+            'description': 'Enter the full product description',
+            'image': 'Select the product image',
+            'quantity': 'Enter the quantity of this product in stock',
+        }

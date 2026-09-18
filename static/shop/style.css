@@ -1,9 +1,9 @@
 /* Common Styles */
 body {
-    font-family: 'Vazirmatn', sans-serif;
+    font-family: sans-serif;
     background-color: #f8f9fa;
-    direction: rtl;
-    text-align: right;
+    direction: ltr;
+    text-align: left;
 }
 
 /* Navbar Styles */
@@ -799,7 +799,7 @@ body {
     margin-left: 0.5rem;
 }
 
-.vertical-category-link i.fa-chevron-left {
+.vertical-category-link i.fa-chevron-right {
     color: #6c757d;
     font-size: 0.8rem;
 }

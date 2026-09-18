@@ -3,15 +3,15 @@
 
 {% block title %}
 {% if request.user.is_active and request.user.is_staff %}
-مدیریت سفارشات مشتریان
+Manage Customer Orders
 {% else %}
-تاریخچه ی سفارشات
+Order History
 {% endif %}
 {% endblock %}
 
 
 {% block main %}
-خوش آمدید {{user.get_full_name}}
+Welcome, {{user.get_full_name}}
 <br>
 <br>
 <div class="row">
@@ -19,30 +19,30 @@
         {%if qs %}
         <div class="card">
           <div class="card-header">
-            <a href="{% url 'account:product-create' %}" class="btn btn-primary">افزودن محصول جدید</a>
+            <a href="{% url 'account:product-create' %}" class="btn btn-primary">Add New Product</a>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
-                <tr> 
-                  <th>نام محصول</th>
-                  <th>قیمت</th>
-                  <th>دسته بندی</th>
-                  <th>توضیحات</th>
-                  <th>عملیات</th>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {% for items in qs %}
-                  <tr>                     
+                  <tr>
                       <td><a href="{% url 'shop:detail' items.id %}">{{items.title}}</a></td>
                       <td>{{items.price}}</td>
                       <td>{{items.category.all|join:", "}}</td>
                       <td>{{items.description|truncatewords:20}}</td>
                       <td>
-                        <a class="btn btn-sm btn-info" href="{% url 'account:product-update' items.id %}">ویرایش</a>
+                        <a class="btn btn-sm btn-info" href="{% url 'account:product-update' items.id %}">Edit</a>
                         {% if user.is_superuser %}
-                        <a class="btn btn-sm btn-danger" href="{% url 'account:product-delete' items.id %}">حذف</a>
+                        <a class="btn btn-sm btn-danger" href="{% url 'account:product-delete' items.id %}">Delete</a>
                         {% endif %}
                       </td>
                   </tr>
@@ -52,7 +52,7 @@
           </div>
         </div>
         {% else %}
-        <h3>محتوایی برای نمایش وجود ندارد</h3>
+        <h3>There is nothing to show</h3>
         {% endif %}
     </div>
 </div>

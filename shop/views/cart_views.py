@@ -48,23 +48,23 @@ class AddToCartView(LoginRequiredMixin, View):
                 quantity = int(request.POST.get('quantity', 1))
                 
                 if quantity <= 0:
-                    messages.error(request, 'تعداد باید بیشتر از صفر باشد.')
+                    messages.error(request, 'Quantity must be greater than zero.')
                     return redirect('shop:detail', id=product_id)
-                
+
                 # Lock the product to check quantity
                 product = Product.objects.select_for_update().get(id=product_id)
-                
+
                 if quantity > product.quantity:
-                    messages.error(request, 'موجودی کافی نیست.')
+                    messages.error(request, 'Not enough stock available.')
                     return redirect('shop:detail', id=product_id)
-                
+
                 cart_item, created = self.cart_repository.add_item(cart, product, quantity)
-                
-                messages.success(request, 'محصول به سبد خرید اضافه شد')
+
+                messages.success(request, 'Product added to cart')
                 return redirect('shop:checkout')
-                
+
         except Exception as e:
-            messages.error(request, f'خطای سیستمی: {str(e)}')
+            messages.error(request, f'System error: {str(e)}')
             return redirect('shop:detail', id=product_id)
 
 class UpdateCartView(LoginRequiredMixin, View):
@@ -79,27 +79,27 @@ class UpdateCartView(LoginRequiredMixin, View):
             
             if quantity <= 0:
                 if self.cart_repository.remove_item(cart, product_id):
-                    messages.success(request, 'محصول از سبد خرید حذف شد.')
+                    messages.success(request, 'Product removed from cart.')
                 else:
-                    messages.error(request, 'خطا در حذف محصول از سبد خرید.')
+                    messages.error(request, 'Error removing the product from the cart.')
                 return redirect('shop:checkout')
-            
+
             product = Product.objects.select_for_update().get(id=product_id)
-            
+
             if quantity > product.quantity:
-                messages.error(request, 'موجودی کافی نیست.')
+                messages.error(request, 'Not enough stock available.')
                 return redirect('shop:checkout')
-            
+
             cart_item = self.cart_repository.update_item_quantity(cart, product_id, quantity)
             if cart_item:
-                messages.success(request, 'سبد خرید بروزرسانی شد.')
+                messages.success(request, 'Cart updated.')
             else:
-                messages.error(request, 'خطا در بروزرسانی سبد خرید.')
-            
+                messages.error(request, 'Error updating the cart.')
+
             return redirect('shop:checkout')
-            
+
         except Exception as e:
-            messages.error(request, f'خطای سیستمی: {str(e)}')
+            messages.error(request, f'System error: {str(e)}')
             return redirect('shop:checkout')
 
 class RemoveFromCartView(LoginRequiredMixin, View):
@@ -111,13 +111,13 @@ class RemoveFromCartView(LoginRequiredMixin, View):
         try:
             cart = self.cart_repository.get_or_create_cart(request.user)
             if self.cart_repository.remove_item(cart, product_id):
-                messages.success(request, 'محصول از سبد خرید حذف شد')
+                messages.success(request, 'Product removed from cart')
             else:
-                messages.error(request, 'خطا در حذف محصول از سبد خرید.')
+                messages.error(request, 'Error removing the product from the cart.')
             return redirect('shop:checkout')
-            
+
         except Exception as e:
-            messages.error(request, f'خطای سیستمی: {str(e)}')
+            messages.error(request, f'System error: {str(e)}')
             return redirect('shop:checkout')
 
 class CheckoutView(LoginRequiredMixin, TemplateView):
@@ -146,15 +146,15 @@ class CheckoutView(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         cart = self.cart_repository.get_active_cart(request.user)
         if not cart or not cart.items.exists():
-            messages.error(request, 'سبد خرید شما خالی است.')
+            messages.error(request, 'Your cart is empty.')
             return redirect('shop:checkout')
-        
+
         shipping_address = request.POST.get('address', '').strip()
         if not shipping_address:
-            messages.error(request, 'لطفا آدرس ارسال را وارد کنید.')
+            messages.error(request, 'Please enter a shipping address.')
             return redirect('shop:checkout')
         if cart.total_price < settings.MINIMUM_ORDER_AMOUNT:
-            messages.error(request, 'مبلغ سفارش شما باید بیشتر از 1000 تومان باشد.')
+            messages.error(request, 'Your order total must be greater than 1000 Toman.')
             return redirect('shop:checkout')
 
         request.session['shipping_address'] = shipping_address

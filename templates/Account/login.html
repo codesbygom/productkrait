@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V2</title>
+	<title>Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -29,7 +29,6 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/css/main.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/css/rtl.css' %}">
 <!--===============================================================================================-->
 
 </head>
@@ -51,7 +50,7 @@
 			<div class="wrap-login100">
 				<form method="post" class="login100-form validate-form">{% csrf_token %}
 					<span class="login100-form-title p-b-26">
-						ورود
+						Log In
 					</span>
 					<span class="login100-form-title p-b-48">
 						<i class="zmdi zmdi-font"></i>
@@ -68,7 +67,7 @@
 						</div>
 					</div>
 				{% endif %}
-						<span class="focus-input100" data-placeholder="نامه برقی"></span>
+						<span class="focus-input100" data-placeholder="Email"></span>
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate="Enter password">
@@ -85,25 +84,25 @@
 						</div>
 					</div>
 				{% endif %}
-						<span class="focus-input100" data-placeholder="رمز عبور"></span>
+						<span class="focus-input100" data-placeholder="Password"></span>
 					</div>
 
 					<div class="container-login100-form-btn">
 						<div class="wrap-login100-form-btn">
 							<div class="login100-form-bgbtn"></div>
 							<button class="login100-form-btn">
-								ورود
+								Log In
 							</button>
 						</div>
 					</div>
 
 					<div class="text-center p-t-115">
 						<span class="txt1">
-							حساب کاربری ندارید؟
+							Don't have an account?
 						</span>
 
 						<a class="txt2" href="{% url 'account:signup' %}">
-							عضو شوید
+							Sign up
 						</a>
 					</div>
 				</form>

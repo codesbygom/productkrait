@@ -32,7 +32,6 @@ venv
 images
 *.png
 *.jpg
-.gitattributes
 
 # Keep the ProductKrait logo assets (override the broad image ignores above)
 !static/shop/images/

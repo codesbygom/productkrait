@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from account.models import User  # تغییر به مدل User سفارشی
+from account.models import User  # using the custom User model
 
 class Command(BaseCommand):
     help = 'Creates a superuser if none exists'

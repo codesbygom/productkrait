@@ -11,61 +11,55 @@ from shop.repositories import CartRepository
 
 def go_to_gateway_view(request):
 
-    # خواندن مبلغ از هر جایی که مد نظر است
+    # Read the amount from wherever is relevant
     cart_repository = CartRepository()
     cart = cart_repository.get_active_cart(request.user)
     total_price = cart.total_price
-    
+
     factory = bankfactories.BankFactory()
-    factory
     try:
         bank = (factory.auto_create()) # or factory.create(bank_models.BankType.BMI) or set identifier
         bank.set_request(request)
-        if():
         bank.set_amount(total_price)
-        print(type(bank))
-        # یو آر ال بازگشت به نرم افزار برای ادامه فرآیند
+        # Callback URL for the app to continue the process
         bank.set_client_callback_url(reverse("call-back-gateway"))
-        # در صورت تمایل اتصال این رکورد به رکورد فاکتور یا هر چیزی که بعدا بتوانید ارتباط بین محصول یا خدمات را با این
-        # پرداخت برقرار کنید.
+        # Optionally link this record to an invoice or anything else you might
+        # need to connect the product/service to this payment later.
         bank_record = bank.ready()
-        # هدایت کاربر به درگاه بانک
+        # Redirect the user to the bank gateway
         return bank.redirect_gateway()
     except AZBankGatewaysException as e:
         logging.critical(e)
         # cart_repository.clear_cart(cart)
-        messages.error(request, 'خطای سیستمی در هدایت به درگاه بانکی...')
+        messages.error(request, 'System error while redirecting to the bank gateway...')
         return redirect('shop:checkout')
-        raise e
 
 def callback_gateway_view(request):
 
     current_user = request.user
-    cart_repository = CartRepository()  
+    cart_repository = CartRepository()
     cart = cart_repository.get_active_cart(request.user)
 
 
     tracking_code = request.GET.get(settings.TRACKING_CODE_QUERY_PARAM, None)
     if not tracking_code:
-        logging.debug("این لینک معتبر نیست.")
+        logging.debug("This link is not valid.")
         raise Http404
 
     try:
         bank_record = bank_models.Bank.objects.get(tracking_code=tracking_code)
     except bank_models.Bank.DoesNotExist:
-        logging.debug("این لینک معتبر نیست.")
+        logging.debug("This link is not valid.")
         raise Http404
-    
-    print('bank_record', bank_record.__dict__)
 
-
-    # در این قسمت باید از طریق داده هایی که در بانک رکورد وجود دارد، رکورد متناظر یا هر اقدام مقتضی دیگر را انجام دهیم
+    # Use the data available on the bank record to create the corresponding
+    # record or perform whatever action is appropriate.
     if bank_record.is_success:
         shipping_address = request.session.pop('shipping_address', '')
         if not shipping_address:
-            messages.error(request, 'لطفا آدرس ارسال را وارد کنید.')
+            messages.error(request, 'Please enter a shipping address.')
             return redirect('shop:checkout')
-        
+
         new_payment = Payment()
         new_payment.user = current_user
         new_payment.payment_number = bank_record.tracking_code
@@ -73,20 +67,20 @@ def callback_gateway_view(request):
         new_payment.amount_paid = bank_record.amount
         new_payment.status = bank_record.status
         new_payment.save()
-        # پرداخت با موفقیت انجام پذیرفته است و بانک تایید کرده است.
-        # می توانید کاربر را به صفحه نتیجه هدایت کنید یا نتیجه را نمایش دهید.
+        # The payment was completed successfully and confirmed by the bank.
+        # You can redirect the user to a result page or display the result.
         try:
             order = cart_repository.create_order(cart, shipping_address)
             order.payment = new_payment
             order.save()
-            messages.success(request, 'سفارش شما با موفقیت ثبت شد.')
+            messages.success(request, 'Your order was placed successfully.')
             cart_repository.clear_cart(cart)
             return redirect('shop:success')
         except Exception as e:
             cart_repository.clear_cart(cart)
-            messages.error(request, 'خطای سیستمی در ثبت سفارش. با پشتیبانی تماس گیرید..')
+            messages.error(request, 'System error while placing the order. Please contact support.')
             return redirect('shop:failure')
     else:
         cart_repository.clear_cart(cart)
-        messages.error(request, 'پرداخت با شکست مواجه شد. اگر مبلغ کسر شده است، ظرف ۴۸ ساعت بازخواهد گشت.')
+        messages.error(request, 'Payment failed. If an amount was deducted, it will be refunded within 48 hours.')
         return redirect('shop:failure')

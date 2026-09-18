@@ -1,7 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 
-{% block title %}نتایج جستجو برای "{{ search_query }}" - ProductKrait{% endblock %}
+{% block title %}Search results for "{{ search_query }}" - ProductKrait{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'shop/category.css' %}">
@@ -10,8 +10,8 @@
 {% block content %}
 <div class="category-header">
     <div class="container text-center">
-        <h1 class="category-title">نتایج جستجو برای "{{ search_query }}"</h1>
-        <p class="text-muted">تعداد نتایج: {{ products|length }}</p>
+        <h1 class="category-title">Search results for "{{ search_query }}"</h1>
+        <p class="text-muted">Number of results: {{ products|length }}</p>
     </div>
 </div>
 
@@ -23,27 +23,27 @@
                 {% if product.image %}
                 <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
                 {% else %}
-                <img src="{% static 'shop/images/no-image.png' %}" class="card-img-top" alt="بدون تصویر">
+                <img src="{% static 'shop/images/no-image.png' %}" class="card-img-top" alt="No image">
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ product.name }}</h5>
                     <div class="card-text">{{ product.description|safe|truncatechars:100 }}</div>
-                    <p class="card-text"><strong>قیمت:</strong> {{ product.price }} تومان</p>
+                    <p class="card-text"><strong>Price:</strong> {{ product.price }} Toman</p>
                     <div class="d-flex justify-content-between align-items-center">
                         {% if product.quantity > 0 %}
                             <form method="post" action="{% url 'shop:add_to_cart' product.id %}" class="add-to-cart-form">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-cart-plus"></i> افزودن به سبد
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
                                 </button>
                             </form>
                         {% else %}
                             <button class="btn btn-secondary btn-sm" disabled>
-                                <i class="fas fa-times-circle"></i> ناموجود
+                                <i class="fas fa-times-circle"></i> Out of Stock
                             </button>
                         {% endif %}
                         <a href="{% url 'shop:detail' product.id %}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-eye"></i> مشاهده
+                            <i class="fas fa-eye"></i> View
                         </a>
                     </div>
                 </div>
@@ -53,9 +53,9 @@
         <div class="col-12">
             <div class="alert alert-info text-center">
                 <i class="fas fa-search fa-3x mb-3"></i>
-                <h4>نتیجه‌ای یافت نشد</h4>
-                <p>متأسفانه هیچ محصولی با عبارت "{{ search_query }}" یافت نشد.</p>
-                <p>لطفاً عبارت جستجوی خود را تغییر دهید یا از دسته‌بندی‌های موجود استفاده کنید.</p>
+                <h4>No results found</h4>
+                <p>Unfortunately, no products were found matching "{{ search_query }}".</p>
+                <p>Please try a different search term or browse the available categories.</p>
             </div>
         </div>
         {% endfor %}

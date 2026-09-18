@@ -4,8 +4,8 @@ from .models import Product, Order, Category, OrderItem, Cart, CartItem, Payment
 
 
 admin.site.site_header = "ProductKrait"
-admin.site.site_title  = "پنل مدیریت ProductKrait"
-admin.site.index_title = "مدیریت سفارشات"
+admin.site.site_title  = "ProductKrait Admin"
+admin.site.index_title = "Order management"
 
 
 
@@ -15,7 +15,7 @@ class ProductAdmin(admin.ModelAdmin):
     def category_to_str(sef,obj):
         return ", ".join([category.title for category in obj.category.all()])
 
-    category_to_str.short_description="دسته بندی"
+    category_to_str.short_description="Category"
 
 
 class OrderItemInline(admin.TabularInline):
@@ -32,11 +32,11 @@ class OrderAdmin(admin.ModelAdmin):
 
     def total_price(self, obj):
         return obj.total_price
-    total_price.short_description = 'قیمت کل'
+    total_price.short_description = 'Total price'
 
     def total_items(self, obj):
         return obj.total_items
-    total_items.short_description = 'تعداد کل آیتم‌ها'
+    total_items.short_description = 'Total items'
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -44,12 +44,12 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('title', 'slug')
     list_filter = ('status', 'parent')
     prepopulated_fields = {'slug': ('title',)}
-    
+
     def get_level(self, obj):
         return obj.get_level()
-    get_level.short_description = 'سطح'
+    get_level.short_description = 'Level'
     get_level.admin_order_field = 'parent'
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('parent')
 
@@ -67,11 +67,11 @@ class CartAdmin(admin.ModelAdmin):
 
     def total_price(self, obj):
         return obj.total_price
-    total_price.short_description = 'قیمت کل'
+    total_price.short_description = 'Total price'
 
     def total_items(self, obj):
         return obj.total_items
-    total_items.short_description = 'تعداد کل آیتم‌ها'
+    total_items.short_description = 'Total items'
 
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ('product', 'cart', 'quantity', 'price', 'total_price')
@@ -81,7 +81,7 @@ class CartItemAdmin(admin.ModelAdmin):
 
     def total_price(self, obj):
         return obj.total_price
-    total_price.short_description = 'قیمت کل'
+    total_price.short_description = 'Total price'
 
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('product', 'order', 'quantity', 'price', 'total_price')
@@ -91,7 +91,7 @@ class OrderItemAdmin(admin.ModelAdmin):
 
     def total_price(self, obj):
         return obj.total_price
-    total_price.short_description = 'قیمت کل'
+    total_price.short_description = 'Total price'
 
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('payment_number', 'user', 'payment_method', 'amount_paid', 'status', 'created_at')
@@ -105,8 +105,8 @@ class PaymentAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related('user')
 
     def amount_paid_formatted(self, obj):
-        return f"{obj.amount_paid:,} تومان"
-    amount_paid_formatted.short_description = 'مبلغ پرداختی'
+        return f"{obj.amount_paid:,} Toman"
+    amount_paid_formatted.short_description = 'Amount paid'
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)

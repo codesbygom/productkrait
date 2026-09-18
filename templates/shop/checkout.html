@@ -1,7 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 
-{% block title %}تکمیل خرید{% endblock %}
+{% block title %}Checkout{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'shop/checkout.css' %}">
@@ -195,10 +195,10 @@
     {% if is_empty %}
         <div class="empty-cart-message">
             <i class="fas fa-shopping-cart"></i>
-            <h3 class="mb-2">سبد خرید شما خالی است</h3>
-            <p class="text-muted mb-3">برای مشاهده محصولات و افزودن آنها به سبد خرید، به صفحه ProductKrait مراجعه کنید.</p>
+            <h3 class="mb-2">Your cart is empty</h3>
+            <p class="text-muted mb-3">Visit the ProductKrait page to browse products and add them to your cart.</p>
             <a href="{% url 'shop:index' %}" class="btn btn-primary btn-sm">
-                مشاهده محصولات
+                Browse Products
             </a>
         </div>
     {% else %}
@@ -207,18 +207,18 @@
                 <!-- Cart Items -->
                 <div class="card">
                     <div class="card-header">
-                        <h5>سبد خرید</h5>
+                        <h5>Cart</h5>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-sm mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width: 50px">تصویر</th>
-                                        <th>نام محصول</th>
-                                        <th style="width: 90px">قیمت</th>
-                                        <th style="width: 120px">تعداد</th>
-                                        <th style="width: 50px">عملیات</th>
+                                        <th style="width: 50px">Image</th>
+                                        <th>Product Name</th>
+                                        <th style="width: 90px">Price</th>
+                                        <th style="width: 120px">Quantity</th>
+                                        <th style="width: 50px">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -228,13 +228,13 @@
                                                 {% if item.product.image %}
                                                     <img src="{{ item.product.image.url }}" class="product-image" alt="{{ item.product.title }}">
                                                 {% else %}
-                                                    <img src="{% static 'shop/images/no-image.png' %}" class="product-image" alt="بدون تصویر">
+                                                    <img src="{% static 'shop/images/no-image.png' %}" class="product-image" alt="No image">
                                                 {% endif %}
                                             </td>
                                             <td>
                                                 <a href="{% url 'shop:detail' item.product.id %}" class="product-title">{{ item.product.title }}</a>
                                             </td>
-                                            <td class="product-price">{{ item.product.price|floatformat:0 }} تومان</td>
+                                            <td class="product-price">{{ item.product.price|floatformat:0 }} Toman</td>
                                             <td>
                                                 <form method="post" action="{% url 'shop:update_cart' item.product.id %}" class="d-inline">
                                                     {% csrf_token %}
@@ -249,7 +249,7 @@
                                             </td>
                                             <td>
                                                 <form method="post" action="{% url 'shop:remove_from_cart' item.product.id %}" class="d-inline" 
-                                                      onsubmit="return confirm('آیا از حذف این محصول از سبد خرید اطمینان دارید؟');">
+                                                      onsubmit="return confirm('Are you sure you want to remove this product from your cart?');">
                                                     {% csrf_token %}
                                                     <button type="submit" class="btn btn-sm btn-danger">
                                                         <i class="fas fa-trash"></i>
@@ -267,7 +267,7 @@
                 <!-- Shipping Information -->
                 <div class="card">
                     <div class="card-header">
-                        <h5>اطلاعات ارسال</h5>
+                        <h5>Shipping Information</h5>
                     </div>
                     <div class="card-body">
 
@@ -275,18 +275,18 @@
                             {% csrf_token %}
                             <div class="row g-2">
                                 <div class="col-md-6">
-                                    <label for="full_name" class="form-label">نام و نام خانوادگی</label>
+                                    <label for="full_name" class="form-label">Full Name</label>
                                     <input type="text" class="form-control form-control-sm" id="full_name" name="full_name" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="phone" class="form-label">شماره تماس</label>
-                                    <input type="tel" class="form-control form-control-sm" id="phone" name="phone" 
-                                           pattern="[0-9]*" inputmode="numeric" 
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control form-control-sm" id="phone" name="phone"
+                                           pattern="[0-9]*" inputmode="numeric"
                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                            required>
                                 </div>
                                 <div class="col-12">
-                                    <label for="address" class="form-label">آدرس کامل</label>
+                                    <label for="address" class="form-label">Full Address</label>
                                     <textarea class="form-control form-control-sm" id="address" name="address" rows="2" required></textarea>
                                 </div>
                             </div>
@@ -299,36 +299,36 @@
                 <!-- Order Summary -->
                 <div class="card">
                     <div class="card-header">
-                        <h5>خلاصه سفارش</h5>
+                        <h5>Order Summary</h5>
                     </div>
                     <div class="card-body">
                         <div class="checkout-summary">
                             <div class="checkout-summary-item">
-                                <span>تعداد محصولات:</span>
-                                <span>{{ cart_items|length }} عدد</span>
+                                <span>Number of products:</span>
+                                <span>{{ cart_items|length }}</span>
                             </div>
                             <div class="checkout-summary-item">
-                                <span>جمع کل:</span>
-                                <span class="total-price">{{ total|floatformat:0 }} تومان</span>
+                                <span>Subtotal:</span>
+                                <span class="total-price">{{ total|floatformat:0 }} Toman</span>
                             </div>
                             <div class="checkout-summary-item">
-                                <span>هزینه ارسال:</span>
-                                <span>رایگان</span>
+                                <span>Shipping cost:</span>
+                                <span>Free</span>
                             </div>
                             <div class="checkout-summary-total">
-                                <span>مبلغ قابل پرداخت:</span>
-                                <span>{{ total|floatformat:0 }} تومان</span>
+                                <span>Total due:</span>
+                                <span>{{ total|floatformat:0 }} Toman</span>
                             </div>
                         </div>
-                        
+
                         <button type="submit" form="checkout-form" class="btn btn-primary w-100 mt-2">
                             <i class="fas fa-credit-card"></i>
-                            ادامه فرآیند خرید
+                            Proceed to Payment
                         </button>
-                        
+
                         <a href="{% url 'shop:index' %}" class="btn btn-outline-secondary w-100 mt-2">
-                            <i class="fas fa-arrow-right"></i>
-                            بازگشت به ProductKrait
+                            <i class="fas fa-arrow-left"></i>
+                            Back to ProductKrait
                         </a>
                     </div>
                 </div>

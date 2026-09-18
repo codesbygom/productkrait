@@ -51,10 +51,10 @@ class OrderUpdateForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
             'tracking_code': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'کد رهگیری پستی را وارد کنید'
+                'placeholder': 'Enter the shipping tracking code'
             })
         }
         labels = {
-            'status': 'وضعیت سفارش',
-            'tracking_code': 'کد رهگیری'
+            'status': 'Order status',
+            'tracking_code': 'Tracking code'
         }

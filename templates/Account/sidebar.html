@@ -7,9 +7,9 @@
       <img src = "{% static 'registration/adminlte/dist/img/AdminLTELogo.png' %}" alt="" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">
         {% if request.user.is_active and request.user.is_staff %}
-            پنل مدیریت
+            Admin Panel
         {% else %}
-            پنل کاربری
+            My Account
         {% endif %}
         
       </span>
@@ -36,9 +36,9 @@
             <a href="{% url 'account:orders' %}" class="nav-link {% if request.resolver_match.url_name == 'orders' %}active bg-info{% endif %}">
               <i class="nav-icon fas fa-shopping-cart"></i>
               <p>{% if request.user.is_active and request.user.is_staff %}
-                سفارشات مشتریان
+                Customer Orders
                {% else %}
-                تاریخچه ی سفارشات
+                Order History
                {% endif %}</p>
             </a>
           </li>
@@ -46,7 +46,7 @@
           <li class="nav-item">
             <a href="{% url 'account:products' %}" class="nav-link {% if request.resolver_match.url_name == 'products' %}active bg-info{% endif %}">
               <i class="nav-icon fas fa-box"></i>
-              <p>لیست تمام محصولات</p>
+              <p>All Products</p>
             </a>
           </li>
           {% endif %}
@@ -54,7 +54,7 @@
           <li class="nav-item">
             <a href="{% url 'account:product-create' %}" class="nav-link {% if request.resolver_match.url_name == 'product-create' %}active bg-info{% endif %}">
               <i class="nav-icon fas fa-plus-circle"></i>
-              <p>ساخت محصول جدید</p>
+              <p>Create New Product</p>
             </a>
           </li>
           {% endif %}
@@ -62,13 +62,13 @@
           <li class="nav-item">
             <a href="{% url 'account:profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active bg-info{% endif %}">
               <i class="nav-icon far fa-user"></i>
-              <p>ویرایش پروفایل</p>
+              <p>Edit Profile</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="{% url 'shop:checkout' %}" class="nav-link {% if request.resolver_match.url_name == 'checkout' %}active bg-info{% endif %}">
               <i class="nav-icon fas fa-shopping-basket"></i>
-              <p>بررسی سبد خرید شخصی</p>
+              <p>View My Cart</p>
             </a>
           </li>
         </ul>

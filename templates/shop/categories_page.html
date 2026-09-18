@@ -1,7 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 
-{% block title %}دسته‌بندی‌ها - ProductKrait{% endblock %}
+{% block title %}Categories - ProductKrait{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'shop/category.css' %}">
@@ -38,8 +38,8 @@
 {% block content %}
 <div class="categories-container">
     <div class="categories-header">
-        <h1>دسته‌بندی‌های محصولات</h1>
-        <p>تمام دسته‌بندی‌ها و زیرمجموعه‌های ProductKrait</p>
+        <h1>Product Categories</h1>
+        <p>All categories and subcategories of ProductKrait</p>
     </div>
     
     <div class="row">
@@ -51,7 +51,7 @@
             {% else %}
                 <div class="alert alert-info text-center">
                     <i class="fas fa-info-circle"></i>
-                    هیچ دسته‌بندی‌ای یافت نشد.
+                    No categories found.
                 </div>
             {% endif %}
         </div>

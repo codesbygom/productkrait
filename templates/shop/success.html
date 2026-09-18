@@ -1,7 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 
-{% block title %}سفارش با موفقیت ثبت شد{% endblock %}
+{% block title %}Order Placed Successfully{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'shop/success.css' %}">
@@ -35,7 +35,7 @@
         border-radius: 8px;
         padding: 1.5rem;
         margin: 1.5rem 0;
-        text-align: right;
+        text-align: left;
     }
     .order-details h3 {
         color: #495057;
@@ -73,7 +73,7 @@
     .order-items th {
         background: #e9ecef;
         padding: 0.75rem;
-        text-align: right;
+        text-align: left;
         font-weight: 500;
         color: #495057;
     }
@@ -110,57 +110,57 @@
 <div class="success-container">
     <div class="success-card">
         <i class="fas fa-check-circle success-icon"></i>
-        <h1 class="success-title">سفارش شما با موفقیت ثبت شد</h1>
-        
+        <h1 class="success-title">Your order was placed successfully</h1>
+
         {% if order %}
             <div class="order-details">
-                <h3>اطلاعات سفارش</h3>
+                <h3>Order Info</h3>
                 <div class="order-info">
                     <div class="info-item">
-                        <div class="info-label">شماره سفارش</div>
+                        <div class="info-label">Order Number</div>
                         <div class="info-value">{{ order.id }}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">کد پیگیری</div>
+                        <div class="info-label">Tracking Number</div>
                         <div class="info-value">{{ order.tracking_number }}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">تاریخ ثبت</div>
+                        <div class="info-label">Placed At</div>
                         <div class="info-value">{{ order.created_at|date:"Y/m/d H:i" }}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">وضعیت سفارش</div>
+                        <div class="info-label">Order Status</div>
                         <div class="info-value">
                             <span class="status-badge status-{{ order.status }}">{{ status_display }}</span>
                         </div>
                     </div>
                     {% if order.tracking_code %}
                     <div class="info-item">
-                        <div class="info-label">کد رهگیری پستی</div>
+                        <div class="info-label">Shipping Tracking Code</div>
                         <div class="info-value">{{ order.tracking_code }}</div>
                     </div>
                     {% endif %}
                     <div class="info-item">
-                        <div class="info-label">قیمت کل</div>
-                        <div class="info-value">{{ order.total_price|floatformat:0 }} تومان</div>
+                        <div class="info-label">Total Price</div>
+                        <div class="info-value">{{ order.total_price|floatformat:0 }} Toman</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">تعداد اقلام</div>
-                        <div class="info-value">{{ order.total_items }} عدد</div>
+                        <div class="info-label">Total Items</div>
+                        <div class="info-value">{{ order.total_items }}</div>
                     </div>
                 </div>
 
                 <div class="order-items">
-                    <h3>اقلام سفارش</h3>
+                    <h3>Order Items</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>تصویر</th>
-                                    <th>نام محصول</th>
-                                    <th>قیمت واحد</th>
-                                    <th>تعداد</th>
-                                    <th>قیمت کل</th>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total Price</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -170,13 +170,13 @@
                                         {% if item.product.image %}
                                             <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}">
                                         {% else %}
-                                            <img src="{% static 'shop/images/no-image.png' %}" alt="بدون تصویر">
+                                            <img src="{% static 'shop/images/no-image.png' %}" alt="No image">
                                         {% endif %}
                                     </td>
                                     <td>{{ item.product.title }}</td>
-                                    <td>{{ item.price|floatformat:0 }} تومان</td>
-                                    <td>{{ item.quantity }} عدد</td>
-                                    <td>{{ item.total_price|floatformat:0 }} تومان</td>
+                                    <td>{{ item.price|floatformat:0 }} Toman</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.total_price|floatformat:0 }} Toman</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -185,20 +185,20 @@
                 </div>
 
                 <div class="info-item mt-3">
-                    <div class="info-label">آدرس ارسال</div>
+                    <div class="info-label">Shipping Address</div>
                     <div class="info-value">{{ order.shipping_address }}</div>
                 </div>
             </div>
         {% else %}
             <p class="success-message">
-                متأسفانه اطلاعات سفارش در دسترس نیست.<br>
-                لطفاً با پشتیبانی تماس بگیرید.
+                Unfortunately, order information is not available.<br>
+                Please contact support.
             </p>
         {% endif %}
 
         <a href="{% url 'shop:index' %}" class="btn btn-success btn-home">
             <i class="fas fa-home"></i>
-            بازگشت به ProductKrait
+            Back to ProductKrait
         </a>
     </div>
 </div>

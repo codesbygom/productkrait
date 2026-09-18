@@ -53,13 +53,13 @@ class OrderUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         order = get_object_or_404(Order, id=self.kwargs['pk'])
         if not self.request.user.is_staff:
-            raise Http404("دسترسی ندارید")
+            raise Http404("You don't have access")
         return order
 
     def form_valid(self, form):
-        messages.success(self.request, 'سفارش با موفقیت بروزرسانی شد.')
+        messages.success(self.request, 'Order updated successfully.')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'خطا در بروزرسانی سفارش. لطفاً دوباره تلاش کنید.')
+        messages.error(self.request, 'Error updating the order. Please try again.')
         return super().form_invalid(form)

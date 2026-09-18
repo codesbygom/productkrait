@@ -38,14 +38,14 @@ class User(AbstractUser):
 
     last_name=models.CharField(max_length=100, blank=True, null=True)
 
-    is_staff = models.BooleanField(default=False, verbose_name='کارمند')
+    is_staff = models.BooleanField(default=False, verbose_name='Staff')
 
 
-    is_author = models.BooleanField(default=False,verbose_name="وضعیت کاربر مدیر")
-    zipcode   = models.IntegerField(verbose_name='کد پستی',blank=True, null=True)
-    address   = models.TextField(max_length=1000,verbose_name='آدرس',blank=True, null=True)
-    city      = models.CharField(max_length=1000,verbose_name='شهر',blank=True, null=True)
-    phone     = models.IntegerField(verbose_name='شماره تلفن',blank=True, null=True)
+    is_author = models.BooleanField(default=False,verbose_name="Admin user status")
+    zipcode   = models.IntegerField(verbose_name='ZIP code',blank=True, null=True)
+    address   = models.TextField(max_length=1000,verbose_name='Address',blank=True, null=True)
+    city      = models.CharField(max_length=1000,verbose_name='City',blank=True, null=True)
+    phone     = models.IntegerField(verbose_name='Phone number',blank=True, null=True)
 
     
     USERNAME_FIELD = 'email'

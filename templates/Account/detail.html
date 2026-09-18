@@ -3,15 +3,15 @@
 
 {% block title %}
 {% if request.user.is_active and request.user.is_staff %}
-مدیریت سفارشات مشتریان
+Manage Customer Orders
 {% else %}
-تاریخچه ی سفارشات
+Order History
 {% endif %}
 {% endblock %}
 
 
 {% block main %}
-خوش آمدید {{user.get_full_name}}
+Welcome, {{user.get_full_name}}
 <br>
 <br>
 <div class="row">
@@ -25,9 +25,9 @@
               <thead>
                 <tr>
                   
-                  <th>نام محصول</th>
-                  <th>تعداد سفارش داده شده</th>
-                  <th>قیمت کل محصول</th>
+                  <th>Product Name</th>
+                  <th>Quantity Ordered</th>
+                  <th>Product Total</th>
                   
                 </tr>
               </thead>
@@ -46,7 +46,7 @@
           <!-- /.card-body -->
         </div>
         {% else %}
-        <h3>محتوایی برای نمایش وجود ندارد</h3>
+        <h3>There is nothing to show</h3>
         {% endif %}
       <!-- /.card -->
     </div>
