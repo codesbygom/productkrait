@@ -1,7 +1,12 @@
 /* Common Styles */
+html {
+    color-scheme: light;
+}
+
 body {
     font-family: sans-serif;
     background-color: #f8f9fa;
+    color: #212529;
     direction: ltr;
     text-align: left;
 }
@@ -142,7 +147,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 0.5rem 1rem;
-    text-align: right;
+    text-align: left;
 }
 
 .form-control:focus {

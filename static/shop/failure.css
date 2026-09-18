@@ -46,7 +46,7 @@
     border-radius: 10px;
     padding: 2rem;
     margin: 2rem 0;
-    text-align: right;
+    text-align: left;
     border: 1px solid #e9ecef;
 }
 
@@ -112,7 +112,7 @@
     border-radius: 10px;
     padding: 1.5rem;
     margin: 2rem 0;
-    text-align: right;
+    text-align: left;
     position: relative;
 }
 
@@ -154,7 +154,7 @@
 }
 
 .btn-home {
-    margin-right: 1rem;
+    margin-left: 1rem;
     background: #6c757d;
     border: 1px solid #6c757d;
     color: #fff;
