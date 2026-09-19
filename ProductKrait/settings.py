@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     # django apps
     'shop.apps.ShopConfig',
     'account.apps.AccountConfig',
+    'manager.apps.ManagerConfig',
     # django third party apps
     'widget_tweaks',
     'crispy_forms',
@@ -80,7 +81,6 @@ ROOT_URLCONF = 'ProductKrait.urls'
 #os.path.join(BASE_DIR,'db.sqlites')
 
 STATIC_URL = '/static/'
-# STATIC_ROOT=os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS=(
     os.path.join(BASE_DIR, "static"),
@@ -147,8 +147,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -157,8 +155,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 AZ_IRANIAN_BANK_GATEWAYS = {
     "GATEWAYS": {
         "ZARINPAL": {
-            "MERCHANT_CODE": "sdgtgjhkyioplrndmkrtygfkdlserpwderds",
-            "SANDBOX": 1, 
+            "MERCHANT_CODE": os.environ.get("ZARINPAL_MERCHANT_CODE", "sdgtgjhkyioplrndmkrtygfkdlserpwderds"),
+            "SANDBOX": int(os.environ.get("ZARINPAL_SANDBOX", "1")),
         },
     },
     "IS_SAMPLE_FORM_ENABLE": True,
@@ -174,12 +172,15 @@ AZ_IRANIAN_BANK_GATEWAYS = {
     "CUSTOM_APP": None,  
 }
 
-MINIMUM_ORDER_AMOUNT = 100000
+MINIMUM_ORDER_AMOUNT = int(os.environ.get("MINIMUM_ORDER_AMOUNT", "100000"))
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -22,29 +22,9 @@
           <li class="nav-item">
             <a href="{% url 'account:orders' %}" class="nav-link {% if request.resolver_match.url_name == 'orders' %}active bg-info{% endif %}">
               <i class="nav-icon fas fa-shopping-cart"></i>
-              <p>{% if request.user.is_active and request.user.is_staff %}
-                Customer Orders
-               {% else %}
-                Order History
-               {% endif %}</p>
+              <p>Order History</p>
             </a>
           </li>
-          {% if request.user.is_active and request.user.is_staff %}
-          <li class="nav-item">
-            <a href="{% url 'account:products' %}" class="nav-link {% if request.resolver_match.url_name == 'products' %}active bg-info{% endif %}">
-              <i class="nav-icon fas fa-box"></i>
-              <p>All Products</p>
-            </a>
-          </li>
-          {% endif %}
-          {% if request.user.is_active and request.user.is_staff %}
-          <li class="nav-item">
-            <a href="{% url 'account:product-create' %}" class="nav-link {% if request.resolver_match.url_name == 'product-create' %}active bg-info{% endif %}">
-              <i class="nav-icon fas fa-plus-circle"></i>
-              <p>Create New Product</p>
-            </a>
-          </li>
-          {% endif %}
           
           <li class="nav-item">
             <a href="{% url 'account:profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active bg-info{% endif %}">
@@ -52,6 +32,14 @@
               <p>Edit Profile</p>
             </a>
           </li>
+          {% if request.user.is_active and request.user.is_staff %}
+          <li class="nav-item">
+            <a href="{% url 'manager:dashboard' %}" class="nav-link">
+              <i class="nav-icon fas fa-user-shield"></i>
+              <p>Manager</p>
+            </a>
+          </li>
+          {% endif %}
           <li class="nav-item">
             <a href="{% url 'shop:checkout' %}" class="nav-link {% if request.resolver_match.url_name == 'checkout' %}active bg-info{% endif %}">
               <i class="nav-icon fas fa-shopping-basket"></i>

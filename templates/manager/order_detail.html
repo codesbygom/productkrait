@@ -1,0 +1,45 @@
+{% extends 'manager/base.html' %}
+{% block page_title %}Order #{{ order.pk }}{% endblock %}
+{% block title %}Order #{{ order.pk }}{% endblock %}
+{% block main %}
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong>Details</strong>
+    <a href="{% url 'manager:order-update' order.pk %}" class="btn btn-sm btn-warning">Edit status / tracking</a>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Customer:</strong> {{ order.user.email }}</p>
+        <p><strong>Placed:</strong> {{ order.created_at|date:"Y/m/d H:i" }}</p>
+        <p><strong>Updated:</strong> {{ order.updated_at|date:"Y/m/d H:i" }}</p>
+        <p><strong>Total:</strong> {{ order.get_total_price }} Toman</p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+        <p><strong>Tracking code:</strong> {{ order.tracking_code|default:"Not recorded" }}</p>
+        {% if order.tracking_number %}<p><strong>Tracking number:</strong> {{ order.tracking_number }}</p>{% endif %}
+        <p><strong>Total items:</strong> {{ order.total_items }}</p>
+      </div>
+    </div>
+    <p class="mb-1"><strong>Shipping address:</strong></p>
+    <p>{{ order.shipping_address|linebreaksbr }}</p>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header"><strong>Items</strong></div>
+  <div class="card-body table-responsive p-0">
+    <table class="table mb-0">
+      <thead><tr><th>Product</th><th>Unit price</th><th>Qty</th><th>Total</th></tr></thead>
+      <tbody>
+      {% for item in items %}
+        <tr>
+          <td>{{ item.product.title }}</td><td>{{ item.price }}</td><td>{{ item.quantity }}</td><td>{{ item.total_price }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<a href="{% url 'manager:orders' %}" class="btn btn-secondary">Back to orders</a>
+{% endblock %}

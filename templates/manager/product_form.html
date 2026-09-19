@@ -1,0 +1,13 @@
+{% extends 'manager/base.html' %}
+{% load crispy_forms_tags %}
+{% block page_title %}{% if object %}Edit product{% else %}New product{% endif %}{% endblock %}
+{% block title %}{% if object %}Edit "{{ object.title }}"{% else %}New product{% endif %}{% endblock %}
+{% block main %}
+<div class="card"><div class="card-body">
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-success">{% if object %}Save changes{% else %}Create product{% endif %}</button>
+    <a href="{% url 'manager:products' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}

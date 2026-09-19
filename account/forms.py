@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import get_user_model
-from shop.models import Order
 
 User = get_user_model()
 
@@ -41,20 +40,3 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         self.fields['old_password'].widget.attrs.update({'class': 'form-control'})
         self.fields['new_password1'].widget.attrs.update({'class': 'form-control'})
         self.fields['new_password2'].widget.attrs.update({'class': 'form-control'})
-
-class OrderUpdateForm(forms.ModelForm):
-    """Form for updating order status and tracking code."""
-    class Meta:
-        model = Order
-        fields = ('status', 'tracking_code')
-        widgets = {
-            'status': forms.Select(attrs={'class': 'form-control'}),
-            'tracking_code': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the shipping tracking code'
-            })
-        }
-        labels = {
-            'status': 'Order status',
-            'tracking_code': 'Tracking code'
-        }

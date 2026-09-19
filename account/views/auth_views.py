@@ -20,8 +20,6 @@ class CustomLoginView(LoginView):
     success_url = reverse_lazy('shop:index')
 
     def get_success_url(self):
-        if self.request.user.is_staff:
-            return reverse_lazy('account:products')
         return self.success_url
 
 class CustomLogoutView(LogoutView):

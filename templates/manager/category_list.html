@@ -1,0 +1,29 @@
+{% extends 'manager/base.html' %}
+{% block page_title %}Categories{% endblock %}
+{% block title %}Categories{% endblock %}
+{% block main %}
+<div class="card">
+  <div class="card-header text-right">
+    <a href="{% url 'manager:category-create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> New category</a>
+  </div>
+  <div class="card-body table-responsive p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Title</th><th>Slug</th><th>Parent</th><th>Position</th><th>Shown</th><th></th></tr></thead>
+      <tbody>
+      {% for c in categories %}
+        <tr>
+          <td>{{ c.title }}</td><td>{{ c.slug }}</td><td>{{ c.parent|default:"-" }}</td>
+          <td>{{ c.position }}</td><td>{{ c.status|yesno:"Yes,No" }}</td>
+          <td class="text-right text-nowrap">
+            <a class="btn btn-sm btn-info" href="{% url 'manager:category-update' c.pk %}">Edit</a>
+            <a class="btn btn-sm btn-danger" href="{% url 'manager:category-delete' c.pk %}">Delete</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-muted p-3">No categories yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

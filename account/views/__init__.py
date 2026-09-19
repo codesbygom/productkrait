@@ -9,16 +9,9 @@ from .auth_views import (
     CustomLogoutView as LogoutView,
     ProfileView
 )
-from .product_views import (
-    ProductListView,
-    ProductCreateView,
-    ProductUpdateView,
-    ProductDeleteView
-)
 from .order_views import (
     OrderListView,
     OrderDetailView,
-    OrderUpdateView,
 )
 
 __all__ = [
@@ -27,13 +20,7 @@ __all__ = [
     'LoginView',
     'LogoutView',
     'ProfileView',
-    # Product views
-    'ProductListView',
-    'ProductCreateView',
-    'ProductUpdateView',
-    'ProductDeleteView',
     # Order views
     'OrderListView',
     'OrderDetailView',
-    'OrderUpdateView',
 ] 

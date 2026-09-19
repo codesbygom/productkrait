@@ -1,0 +1,27 @@
+{% extends 'manager/base.html' %}
+{% block page_title %}Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block main %}
+<div class="row">
+  <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ product_count }}</span>Products</div></div>
+  <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ category_count }}</span>Categories</div></div>
+  <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ order_count }}</span>Orders</div></div>
+  <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ pending_orders }}</span>Awaiting payment</div></div>
+</div>
+<div class="card">
+  <div class="card-header"><strong>Low stock</strong> <small class="text-muted">({{ low_stock_limit }} or fewer left)</small></div>
+  <div class="card-body table-responsive p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Product</th><th>In stock</th><th></th></tr></thead>
+      <tbody>
+      {% for p in low_stock %}
+        <tr><td>{{ p.title }}</td><td>{{ p.quantity }}</td>
+            <td class="text-right"><a class="btn btn-sm btn-info" href="{% url 'manager:product-update' p.pk %}">Edit</a></td></tr>
+      {% empty %}
+        <tr><td colspan="3" class="text-muted p-3">Nothing running low.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

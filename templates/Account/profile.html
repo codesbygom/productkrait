@@ -1,13 +1,7 @@
 {% extends 'Account/base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-{% if request.user.is_active and request.user.is_staff %}
-User Profile
-{% else %}
-User Profile
-{% endif %}
-{% endblock %}
+{% block title %}User Profile{% endblock %}
 
 
 

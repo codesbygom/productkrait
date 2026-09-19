@@ -1,0 +1,46 @@
+{% extends 'manager/base.html' %}
+{% block page_title %}Products{% endblock %}
+{% block title %}Products{% endblock %}
+{% block main %}
+<div class="card">
+  <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
+    <form method="get" class="form-inline">
+      <input type="search" name="q" value="{{ q }}" class="form-control mr-2" placeholder="Search products">
+      <button class="btn btn-secondary">Search</button>
+    </form>
+    <a href="{% url 'manager:product-create' %}" class="btn btn-primary mt-2 mt-sm-0"><i class="fas fa-plus"></i> New product</a>
+  </div>
+  <div class="card-body table-responsive p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th></th><th>Title</th><th>Categories</th><th>Price</th><th>Discounted</th><th>Stock</th><th></th></tr></thead>
+      <tbody>
+      {% for p in products %}
+        <tr>
+          <td>{% if p.image %}<img src="{{ p.image.url }}" class="mgr-thumb" alt="">{% endif %}</td>
+          <td>{{ p.title }}</td>
+          <td>{{ p.category.all|join:", " }}</td>
+          <td>{{ p.price }}</td>
+          <td>{{ p.discount_price }}</td>
+          <td>{{ p.quantity }}</td>
+          <td class="text-right text-nowrap">
+            <a class="btn btn-sm btn-info" href="{% url 'manager:product-update' p.pk %}">Edit</a>
+            <a class="btn btn-sm btn-danger" href="{% url 'manager:product-delete' p.pk %}">Delete</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="text-muted p-3">No products found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if is_paginated %}
+  <div class="card-footer d-flex justify-content-between">
+    <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+    <span>
+      {% if page_obj.has_previous %}<a class="btn btn-sm btn-secondary" href="?q={{ q|urlencode }}&page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+      {% if page_obj.has_next %}<a class="btn btn-sm btn-secondary" href="?q={{ q|urlencode }}&page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+    </span>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

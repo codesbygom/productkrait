@@ -1,0 +1,28 @@
+/* krait black/cream palette for the management area */
+.mgr-navbar { background: linear-gradient(180deg,#131517 0%,#0a0b0c 60%,#000 100%) !important; }
+.mgr-sidebar { background: linear-gradient(180deg,#1c1f22 0%,#0a0c0e 65%,#000 100%) !important; }
+.mgr-sidebar .nav-link.active { background: #f0ead6 !important; color: #1a1a1a !important; }
+.mgr-logout { position:absolute; left:0; right:0; bottom:0; padding:.5rem .5rem 1rem; border-top:1px solid rgba(240,234,214,.12); background:#000; }
+.mgr-logout .nav-link { display:flex; align-items:center; width:100%; background:none; border:none; color:#c2c7d0; padding:.8rem 1rem; }
+.mgr-logout .nav-link:hover { color:#f0ead6; }
+.mgr-logout .nav-link p { margin:0 0 0 .5rem; }
+.sidebar-collapse .mgr-logout .nav-link p { display:none; }
+.content-wrapper { background:#f0ead6 !important; }
+.content-wrapper .form-control { background:#fbf7ea !important; border-color:#d8cfae !important; color:#1a1a1a !important; }
+.content-wrapper .form-control:focus { border-color:#1a1a1a !important; box-shadow:none !important; }
+.btn-primary,.btn-secondary,.btn-success,.btn-danger,.btn-info,.btn-warning {
+  background: linear-gradient(180deg,#33383c 0%,#1c1f22 55%,#101214 100%) !important;
+  border-color: rgba(0,0,0,.2) !important; color:#f0ead6 !important; border-radius:10px !important; }
+.mgr-thumb { height:40px; width:40px; object-fit:cover; border-radius:6px; }
+.mgr-stat { background:#1a1a1a; color:#f0ead6; border-radius:12px; padding:1rem 1.2rem; margin-bottom:1rem; }
+.mgr-stat span { display:block; font-size:2rem; font-weight:700; line-height:1.1; }
+
+.mgr-login-body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#f0ead6; font-family:system-ui,sans-serif; }
+.mgr-login-card { width:100%; max-width:380px; margin:1rem; padding:2rem; background:#1a1a1a; color:#f0ead6; border-radius:16px; }
+.mgr-login-card h1 { margin:.5rem 0 0; font-size:1.6rem; text-align:center; }
+.mgr-login-sub { text-align:center; opacity:.7; margin:0 0 1.2rem; }
+.mgr-login-logo { display:block; margin:0 auto; height:90px; width:auto; }
+.mgr-login-card label { display:block; margin:.8rem 0 .3rem; font-size:.9rem; }
+.mgr-login-card input { width:100%; box-sizing:border-box; padding:.65rem .8rem; border-radius:10px; border:1px solid #444; background:#0e0e0e; color:#f0ead6; }
+.mgr-login-card button { width:100%; margin-top:1.4rem; padding:.7rem; border:0; border-radius:10px; background:#f0ead6; color:#1a1a1a; font-weight:700; cursor:pointer; }
+.mgr-error { background:#5a1f1f; padding:.6rem .8rem; border-radius:8px; margin-bottom:.5rem; font-size:.9rem; }

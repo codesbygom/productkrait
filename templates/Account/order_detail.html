@@ -12,18 +12,10 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Order Info #{{ order.id }}</h3>
-                {% if request.user.is_staff %}
-                <div class="card-tools">
-                    <a href="{% url 'account:order-update' order.id %}" class="btn btn-warning btn-sm">
-                        <i class="fas fa-edit"></i> Edit Order
-                    </a>
-                </div>
-                {% endif %}
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Customer:</strong> {{ order.user.email }}</p>
                         <p><strong>Placed at:</strong> {{ order.created_at|date:"Y/m/d H:i" }}</p>
                         <p><strong>Last updated:</strong> {{ order.updated_at|date:"Y/m/d H:i" }}</p>
                         <p><strong>Total:</strong> {{ order.get_total_price }} Toman</p>

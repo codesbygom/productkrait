@@ -29,12 +29,10 @@ from shop.views.payment_views import go_to_gateway_view, callback_gateway_view
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Snippets API",
+      title="ProductKrait API",
       default_version='v1',
-      description="Test description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
+      description="ProductKrait shop API",
+      contact=openapi.Contact(email="contact@productkrait.com"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
@@ -47,6 +45,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shop.urls')),
     path('account/', include('account.urls')),
+    path('manage/', include('manager.urls')),
     path('api/account/', include('api.api_account.urls')),
     path('api/shop/', include('api.api_shop.urls')),
 
