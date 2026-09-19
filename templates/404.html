@@ -1,0 +1,38 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="color-scheme" content="light">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="{% static 'shop/images/logo/productkrait-favicon-1x1.png' %}">
+  <title>Page not found · ProductKrait</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+           background: #f0ead6; color: #1a1a1a; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .card { width: 100%; max-width: 460px; margin: 1rem; padding: 2.5rem 2rem; text-align: center;
+            background: linear-gradient(180deg, #1c1f22 0%, #0a0c0e 65%, #000 100%); color: #f0ead6;
+            border-radius: 18px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
+    .logo { height: 90px; width: auto; }
+    .code { margin: .5rem 0 0; font-size: 5rem; font-weight: 800; line-height: 1; letter-spacing: .05em; }
+    h1 { margin: .4rem 0 .6rem; font-size: 1.4rem; }
+    p { margin: 0 0 1.6rem; opacity: .75; line-height: 1.5; }
+    .actions { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
+    a.btn { padding: .7rem 1.3rem; border-radius: 10px; text-decoration: none; font-weight: 700; }
+    a.primary { background: #f0ead6; color: #1a1a1a; }
+    a.ghost { border: 1px solid rgba(240, 234, 214, .4); color: #f0ead6; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <img class="logo" src="{% static 'shop/images/logo/productkrait-navbar-logo.png' %}" alt="ProductKrait">
+    <div class="code">404</div>
+    <h1>Page not found</h1>
+    <p>The page you are looking for doesn't exist or has been moved.</p>
+    <div class="actions">
+      <a class="btn primary" href="/">Back to the shop</a>
+      <a class="btn ghost" href="javascript:history.back()">Go back</a>
+    </div>
+  </main>
+</body>
+</html>
