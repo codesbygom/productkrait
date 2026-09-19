@@ -64,10 +64,10 @@ class Category(models.Model):
 class Product(models.Model):
     title          = models.CharField(max_length=200)
     slug           = models.SlugField()
-    discount_price = models.FloatField()
+    discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     category       = models.ManyToManyField(Category, related_name='products')
     description    = models.TextField(blank=True, null=True)
-    price          = models.DecimalField(max_digits = 6, decimal_places=2)
+    price          = models.DecimalField(max_digits=10, decimal_places=2)
     image          = models.ImageField(upload_to="images")
     thumbnail      = models.ImageField(upload_to='uploads/', blank=True, null=True)
     date_added     = models.DateTimeField(auto_now_add=True)
@@ -88,24 +88,19 @@ class Product(models.Model):
         return f'/{self.slug}/'
 
     def get_thumbnail(self):
-        if self.thumbnail:
-            return 'http://127.0.0.1:8000'+self.thumbnail.url
-        else:
+        if not self.thumbnail:
             self.thumbnail = self.make_thumbnail(self.image)
             self.save()
-            return 'http://1277.0.01:8000'+ self.thumbnail.url
+        return self.thumbnail.url
 
     def make_thumbnail(self, image, size=(300, 200)):
-        img = Image.open(image)
-        img.convert('RGB')
+        img = Image.open(image).convert('RGB')
         img.thumbnail(size)
 
-        thumb_io  = BytesIO()
+        thumb_io = BytesIO()
         img.save(thumb_io, 'JPEG', quality=85)
 
-        thumbnail = File(thumb_io, name= image.name)
-
-        return thumbnail
+        return File(thumb_io, name=image.name)
 
 
 class Cart(models.Model):

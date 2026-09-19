@@ -4,28 +4,39 @@ from shop.models import Category, Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    thumbnail = serializers.SerializerMethodField()
+
     class Meta:
-        model  = Product
+        model = Product
         fields = (
-            "id",
-            "name",
-            "get_absolute_url",
-            "description",
-            "price",
-            "get_image",
-            "get_thumbnail"
+            'id',
+            'title',
+            'slug',
+            'url',
+            'description',
+            'price',
+            'discount_price',
+            'quantity',
+            'image',
+            'thumbnail',
         )
+        read_only_fields = fields
+
+    def get_thumbnail(self, obj):
+        return obj.get_thumbnail() if obj.image else None
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    products = ProductSerializer(many=True)
+    products = ProductSerializer(many=True, read_only=True)
 
     class Meta:
-        model  = Product
+        model = Category
         fields = (
-            "id",
-            "name",
-            "slug",
-            "products",
+            'id',
+            'title',
+            'slug',
+            'parent',
+            'products',
         )
+        read_only_fields = fields
