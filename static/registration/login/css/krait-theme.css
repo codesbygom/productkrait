@@ -70,25 +70,30 @@ body,
     margin-bottom: 20px;
 }
 
-/* Cream button (instead of the blue/purple gradient) with a soft dark
-   sweep on hover.
-   .login100-form-bgbtn is 3x the button width, sitting at left:-100% at rest
-   (so the visible window shows the MIDDLE third of this gradient) and slides
-   to left:0 on hover (revealing the FIRST third instead). The middle third
-   stays flat cream so the button looks matte at rest; a soft shine sits in
-   the first third so it only sweeps in gently on hover. */
+/* Cream button (instead of the blue/purple gradient). No sliding sweep:
+   the background stays flat and, like the Home buttons on the rest of the
+   site, a soft dark glow follows the cursor on hover (--mx/--my are set
+   by the small script at the bottom of login.html / signup.html). */
 .login100-form-bgbtn {
+    left: 0 !important;
+    width: 100% !important;
     background: #f0ead6 !important;
-    background: linear-gradient(
-        90deg,
-        #f0ead6 0%,
-        #d8cfae 14%,
-        #fffdf4 18%,
-        #d8cfae 22%,
-        #f0ead6 32%,
-        #f0ead6 68%,
-        #f0ead6 100%
-    ) !important;
+    -webkit-transition: none !important;
+    transition: none !important;
+}
+
+.wrap-login100-form-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(80px circle at var(--mx, 50%) var(--my, 50%), rgba(0, 0, 0, 0.18), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.wrap-login100-form-btn:hover::after {
+    opacity: 1;
 }
 
 .login100-form-btn {

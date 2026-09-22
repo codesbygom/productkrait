@@ -5,6 +5,8 @@ from io import BytesIO
 from django.core.files import File
 from django.core.validators import MinValueValidator
 from django.utils.text import slugify
+from .imaging import PRODUCT_THUMBNAIL_SIZE
+from .upload import UUIDUploadTo
 
 
 
@@ -68,8 +70,8 @@ class Product(models.Model):
     category       = models.ManyToManyField(Category, related_name='products')
     description    = models.TextField(blank=True, null=True)
     price          = models.DecimalField(max_digits=10, decimal_places=2)
-    image          = models.ImageField(upload_to="images")
-    thumbnail      = models.ImageField(upload_to='uploads/', blank=True, null=True)
+    image          = models.ImageField(upload_to=UUIDUploadTo("products"))
+    thumbnail      = models.ImageField(upload_to=UUIDUploadTo("thumbnails"), blank=True, null=True)
     date_added     = models.DateTimeField(auto_now_add=True)
     quantity       = models.IntegerField(default=0)
 
@@ -93,7 +95,7 @@ class Product(models.Model):
             self.save()
         return self.thumbnail.url
 
-    def make_thumbnail(self, image, size=(300, 200)):
+    def make_thumbnail(self, image, size=PRODUCT_THUMBNAIL_SIZE):
         img = Image.open(image).convert('RGB')
         img.thumbnail(size)
 
