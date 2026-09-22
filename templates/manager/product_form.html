@@ -1,13 +1,54 @@
 {% extends 'manager/base.html' %}
-{% load crispy_forms_tags %}
+{% load static crispy_forms_filters %}
 {% block page_title %}{% if object %}Edit product{% else %}New product{% endif %}{% endblock %}
 {% block title %}{% if object %}Edit "{{ object.title }}"{% else %}New product{% endif %}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+{% endblock %}
+
 {% block main %}
 <div class="card"><div class="card-body">
   <form method="post" enctype="multipart/form-data">{% csrf_token %}
-    {{ form|crispy }}
+    {% for field in form %}
+      {% if field.name == 'image' %}
+        <div class="form-group">
+          <label>{{ field.label }}</label>
+          {% if object and object.image %}
+            <div class="mb-2">
+              <img src="{{ object.image.url }}" alt="" class="mgr-current-image">
+              <small class="d-block text-muted">Current photo. Choose a new one below to replace it.</small>
+            </div>
+          {% endif %}
+          {{ field }}
+          <div id="crop-zone" hidden>
+            <div id="crop-drop" class="mgr-drop">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p class="mb-2">Drag and drop a photo here, or</p>
+              <button type="button" id="crop-browse" class="btn btn-secondary">Browse</button>
+            </div>
+            <div id="crop-stage" class="mgr-crop-stage" hidden><img id="crop-preview" alt=""></div>
+            <div id="crop-tools" class="mgr-crop-tools" hidden>
+              <button type="button" class="btn btn-secondary btn-sm" data-zoom="-0.1" aria-label="Zoom out"><i class="fas fa-search-minus"></i></button>
+              <button type="button" class="btn btn-secondary btn-sm" data-zoom="0.1" aria-label="Zoom in"><i class="fas fa-search-plus"></i></button>
+              <button type="button" class="btn btn-secondary btn-sm" data-reset aria-label="Reset"><i class="fas fa-undo"></i></button>
+            </div>
+            <p id="crop-note" class="mgr-crop-note"></p>
+          </div>
+          {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+          {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+        </div>
+      {% else %}
+        {{ field|as_crispy_field }}
+      {% endif %}
+    {% endfor %}
     <button class="btn btn-success">{% if object %}Save changes{% else %}Create product{% endif %}</button>
     <a href="{% url 'manager:products' %}" class="btn btn-secondary">Cancel</a>
   </form>
 </div></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+<script src="{% static 'manager/crop.js' %}"></script>
 {% endblock %}

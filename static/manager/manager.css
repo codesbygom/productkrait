@@ -26,3 +26,16 @@
 .mgr-login-card input { width:100%; box-sizing:border-box; padding:.65rem .8rem; border-radius:10px; border:1px solid #444; background:#0e0e0e; color:#f0ead6; }
 .mgr-login-card button { width:100%; margin-top:1.4rem; padding:.7rem; border:0; border-radius:10px; background:#f0ead6; color:#1a1a1a; font-weight:700; cursor:pointer; }
 .mgr-error { background:#5a1f1f; padding:.6rem .8rem; border-radius:8px; margin-bottom:.5rem; font-size:.9rem; }
+
+/* Product photo cropper (manager product form) */
+.mgr-current-image { max-width: 240px; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; border: 1px solid #d8cfae; }
+.mgr-drop { border: 2px dashed #b9ad83; border-radius: 12px; padding: 1.5rem; text-align: center; background: #fbf7ea; color: #1a1a1a; }
+.mgr-drop i { font-size: 2rem; margin-bottom: .5rem; }
+.mgr-drop.dragover { border-color: #1a1a1a; background: #f6f0da; }
+.mgr-crop-stage { max-width: 640px; max-height: 60vh; margin-top: 1rem; background: #1a1a1a; border-radius: 8px; overflow: hidden; }
+.mgr-crop-stage img { display: block; max-width: 100%; }
+.mgr-crop-tools { display: flex; gap: .5rem; margin-top: .75rem; }
+.mgr-crop-note { margin: .6rem 0 0; font-size: .85rem; color: #555; }
+.mgr-crop-note.is-error { color: #a12020; font-weight: 600; }
+.cropper-point, .cropper-line { background-color: #f0ead6; }
+.cropper-view-box { outline-color: #f0ead6; }

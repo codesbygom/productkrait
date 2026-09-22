@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{% static 'registration/adminlte/plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'registration/adminlte/dist/css/adminlte.min.css' %}">
   <link rel="stylesheet" href="{% static 'manager/manager.css' %}">
+  {% block head %}{% endblock %}
   <title>{% block page_title %}Manager{% endblock %} · ProductKrait</title>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -83,5 +84,6 @@
 <script src="{% static 'registration/adminlte/plugins/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'registration/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'registration/adminlte/dist/js/adminlte.min.js' %}"></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>
