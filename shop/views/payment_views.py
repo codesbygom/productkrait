@@ -7,8 +7,10 @@ from shop.models import Cart, Order, OrderItem
 from shop.models import Payment
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from shop.repositories import CartRepository
 
+@login_required
 def go_to_gateway_view(request):
 
     # Read the amount from wherever is relevant
@@ -34,6 +36,7 @@ def go_to_gateway_view(request):
         messages.error(request, 'System error while redirecting to the bank gateway...')
         return redirect('shop:checkout')
 
+@login_required
 def callback_gateway_view(request):
 
     current_user = request.user
@@ -52,35 +55,36 @@ def callback_gateway_view(request):
         logging.debug("This link is not valid.")
         raise Http404
 
-    # Use the data available on the bank record to create the corresponding
-    # record or perform whatever action is appropriate.
-    if bank_record.is_success:
-        shipping_address = request.session.pop('shipping_address', '')
-        if not shipping_address:
-            messages.error(request, 'Please enter a shipping address.')
-            return redirect('shop:checkout')
+    # Reloading the callback page must not record the payment (or the order) twice.
+    if Payment.objects.filter(payment_number=bank_record.tracking_code, user=current_user).exists():
+        return redirect('shop:success' if bank_record.is_success else 'shop:failure')
 
-        new_payment = Payment()
-        new_payment.user = current_user
-        new_payment.payment_number = bank_record.tracking_code
-        new_payment.payment_method = bank_record.bank_type
-        new_payment.amount_paid = bank_record.amount
-        new_payment.status = bank_record.status
-        new_payment.save()
-        # The payment was completed successfully and confirmed by the bank.
-        # You can redirect the user to a result page or display the result.
-        try:
-            order = cart_repository.create_order(cart, shipping_address)
-            order.payment = new_payment
-            order.save()
-            messages.success(request, 'Your order was placed successfully.')
-            cart_repository.clear_cart(cart)
-            return redirect('shop:success')
-        except Exception as e:
-            cart_repository.clear_cart(cart)
-            messages.error(request, 'System error while placing the order. Please contact support.')
-            return redirect('shop:failure')
-    else:
-        cart_repository.clear_cart(cart)
+    Payment.objects.create(
+        user=current_user,
+        payment_number=bank_record.tracking_code,
+        payment_method='online',
+        amount_paid=bank_record.amount if bank_record.is_success else 0,
+        status='completed' if bank_record.is_success else 'failed',
+    )
+
+    if not bank_record.is_success:
+        # The cart is kept so the customer can simply try paying again.
         messages.error(request, 'Payment failed. If an amount was deducted, it will be refunded within 48 hours.')
+        return redirect('shop:failure')
+
+    # The payment was completed successfully and confirmed by the bank.
+    payment = Payment.objects.get(payment_number=bank_record.tracking_code, user=current_user)
+    shipping_address = request.session.pop('shipping_address', '') or current_user.address or ''
+    try:
+        if cart is None:
+            raise ValueError('No active cart')
+        order = cart_repository.create_order(cart, shipping_address)
+        order.payment = payment
+        order.save()
+        messages.success(request, 'Your order was placed successfully.')
+        return redirect('shop:success')
+    except Exception:
+        logging.exception('Could not create the order for paid tracking code %s', bank_record.tracking_code)
+        messages.error(request, 'Your payment was received but we could not place the order. '
+                                'Please contact support with tracking code %s.' % bank_record.tracking_code)
         return redirect('shop:failure')
