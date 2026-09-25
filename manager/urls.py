@@ -21,4 +21,9 @@ urlpatterns = [
     path('categories/create/', views.CategoryCreateView.as_view(), name='category-create'),
     path('categories/<int:pk>/update/', views.CategoryUpdateView.as_view(), name='category-update'),
     path('categories/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category-delete'),
+
+    path('customers/', views.CustomerListView.as_view(), name='customers'),
+    path('customers/<int:pk>/', views.CustomerDetailView.as_view(), name='customer-detail'),
+    path('customers/<int:pk>/toggle-active/', views.CustomerToggleActiveView.as_view(), name='customer-toggle-active'),
+
 ]

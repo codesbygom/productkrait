@@ -189,3 +189,53 @@ class CategoryDeleteView(StaffRequiredMixin, DeleteView):
         response = super().form_valid(form)
         messages.success(self.request, f'Category "{title}" deleted.')
         return response
+
+
+class CustomerListView(StaffRequiredMixin, ListView):
+    template_name = 'manager/customer_list.html'
+    context_object_name = 'customers'
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = User.objects.annotate(order_count=Count('orders')).order_by('-date_joined')
+        q = self.request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(Q(email__icontains=q) | Q(username__icontains=q) |
+                           Q(first_name__icontains=q) | Q(last_name__icontains=q))
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['q'] = self.request.GET.get('q', '')
+        return ctx
+
+
+class CustomerDetailView(StaffRequiredMixin, DetailView):
+    model = User
+    template_name = 'manager/customer_detail.html'
+    context_object_name = 'customer'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['orders'] = self.object.orders.order_by('-created_at')
+        ctx['payments'] = self.object.payments.order_by('-created_at')
+        ctx['total_spent'] = self.object.orders.exclude(status__in=PENDING_OR_CANCELLED).aggregate(
+            total=Sum('total_price'))['total'] or 0
+        return ctx
+
+
+class CustomerToggleActiveView(StaffRequiredMixin, View):
+    """Blocks / unblocks a customer's login. Staff accounts are left alone so
+    nobody can lock the management team (or themselves) out from here."""
+    http_method_names = ['post']
+
+    def post(self, request, pk):
+        customer = get_object_or_404(User, pk=pk)
+        if customer.is_staff or customer.is_superuser:
+            messages.error(request, 'Staff accounts cannot be blocked from the manager panel.')
+        else:
+            customer.is_active = not customer.is_active
+            customer.save(update_fields=['is_active'])
+            state = 'unblocked' if customer.is_active else 'blocked'
+            messages.success(request, f'{customer.email} {state}.')
+        return redirect('manager:customer-detail', pk=pk)

@@ -56,6 +56,10 @@
             <a href="{% url 'manager:orders' %}" class="nav-link {% if section == 'orders' or section == 'order-detail' or section == 'order-update' %}active{% endif %}">
               <i class="nav-icon fas fa-shopping-cart"></i><p>Orders</p></a>
           </li>
+          <li class="nav-item">
+            <a href="{% url 'manager:customers' %}" class="nav-link {% if section == 'customers' or section == 'customer-detail' %}active{% endif %}">
+              <i class="nav-icon fas fa-users"></i><p>Customers</p></a>
+          </li>
           {% endwith %}
         </ul>
       </nav>
