@@ -117,7 +117,14 @@ class CheckoutView(LoginRequiredMixin, TemplateView):
             context['cart_items'] = []
             context['total'] = 0
             context['is_empty'] = True
-            
+
+        user = self.request.user
+        context['shipping'] = {
+            'full_name': user.get_full_name(),
+            'phone': user.phone or '',
+            'address': ', '.join(part for part in (user.address, user.city, str(user.zipcode or '')) if part),
+        }
+        context['minimum_order_amount'] = settings.MINIMUM_ORDER_AMOUNT
         return context
 
     def post(self, request, *args, **kwargs):
@@ -126,15 +133,18 @@ class CheckoutView(LoginRequiredMixin, TemplateView):
             messages.error(request, 'Your cart is empty.')
             return redirect('shop:checkout')
 
-        shipping_address = request.POST.get('address', '').strip()
-        if not shipping_address:
-            messages.error(request, 'Please enter a shipping address.')
+        address = request.POST.get('address', '').strip()
+        full_name = request.POST.get('full_name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        if not address or not full_name or not phone:
+            messages.error(request, 'Please enter your name, phone number and shipping address.')
             return redirect('shop:checkout')
         if cart.total_price < settings.MINIMUM_ORDER_AMOUNT:
-            messages.error(request, 'Your order total must be greater than 1000 Toman.')
+            messages.error(request, f'Your order total must be at least {settings.MINIMUM_ORDER_AMOUNT:,} Toman.')
             return redirect('shop:checkout')
 
-        request.session['shipping_address'] = shipping_address
+        # the courier needs who and how to reach, not just where
+        request.session['shipping_address'] = f'{full_name} ({phone})\n{address}'
         return go_to_gateway_view(request)
 
         
