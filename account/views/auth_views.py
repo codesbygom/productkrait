@@ -61,3 +61,23 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     def form_valid(self, form):
         messages.success(self.request, 'Your password has been changed.')
         return super().form_valid(form)
+
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'Account/password_reset_form.html'
+    email_template_name = 'Account/password_reset_email.txt'
+    subject_template_name = 'Account/password_reset_subject.txt'
+    success_url = reverse_lazy('account:password-reset-done')
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'Account/password_reset_done.html'
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'Account/password_reset_confirm.html'
+    success_url = reverse_lazy('account:password-reset-complete')
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'Account/password_reset_complete.html'

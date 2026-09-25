@@ -1,0 +1,35 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<title>{% block title %}Account{% endblock %} · ProductKrait</title>
+	<meta charset="UTF-8">
+	<meta name="color-scheme" content="light">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="{% static 'shop/images/logo/productkrait-favicon-1x1.png' %}"/>
+	<link rel="stylesheet" type="text/css" href="{% static 'registration/vendor/bootstrap/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/fonts/iconic/css/material-design-iconic-font.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/css/main.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'registration/login/css/krait-theme.css' %}">
+</head>
+<body>
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login100-form">
+					<span class="login100-form-title p-b-26">
+						<a href="{% url 'shop:index' %}"><img src="{% static 'shop/images/logo/productkrait-navbar-logo.png' %}" alt="ProductKrait" style="height: 110px; width: auto;"></a>
+					</span>
+					<span class="login100-form-title p-b-48">{% block heading %}{% endblock %}</span>
+					{% block content %}{% endblock %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="{% static 'registration/login/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'registration/login/js/main.js' %}"></script>
+</body>
+</html>
