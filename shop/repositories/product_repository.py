@@ -82,4 +82,5 @@ class ProductRepository(BaseRepository[Product]):
 
     def get_all_categories(self) -> List[Category]:
         """Get all active categories."""
-        return list(Category.objects.filter(status=True)) 
+        from shop.cache import get_active_categories
+        return get_active_categories() 

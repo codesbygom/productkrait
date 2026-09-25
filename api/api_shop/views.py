@@ -7,6 +7,7 @@ from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from shop.cache import cached_catalog
 from shop.models import Category, Order, Product
 from shop.repositories import CartRepository
 
@@ -34,8 +35,9 @@ class LatestProductsList(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, format=None):
-        products = Product.objects.all()[:5]
-        return Response(ProductSerializer(products, many=True).data)
+        data = cached_catalog('api:latest-products',
+                              lambda: ProductSerializer(Product.objects.all()[:5], many=True).data)
+        return Response(data)
 
 
 class ProductDetail(APIView):
@@ -57,8 +59,9 @@ class CategoryDetail(APIView):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def category_list(request, format=None):
-    categories = Category.objects.filter(status=True)
-    return Response(CategorySerializer(categories, many=True).data)
+    data = cached_catalog('api:categories',
+                          lambda: CategorySerializer(Category.objects.filter(status=True), many=True).data)
+    return Response(data)
 
 
 @api_view(['GET', 'POST'])

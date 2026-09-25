@@ -1,3 +1,4 @@
+from .cache import get_category_tree
 from .models import Cart, Category
 
 def active_cart(request):
@@ -11,12 +12,6 @@ def active_cart(request):
     return {'active_cart': None}
 
 def categories_tree(request):
-    """Context processor to provide nested categories to all templates."""
-    # Load all categories with their children recursively
-    categories = Category.objects.filter(
-        parent__isnull=True, 
-        status=True
-    ).prefetch_related(
-        'children__children__children__children__children'  # Support up to 5 levels
-    )
-    return {'categories_tree': categories} 
+    """Context processor to provide nested categories to all templates.
+    Cached (shop/cache.py): it runs on every single page."""
+    return {'categories_tree': get_category_tree()}
