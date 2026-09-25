@@ -55,3 +55,16 @@ class CheckoutTests(TestCase):
         self.fill_cart(500)
         response = self.client.post(reverse('shop:checkout'), {'full_name': 'x', 'phone': '1', 'address': 'y'}, follow=True)
         self.assertContains(response, 'at least 100,000 Toman')
+
+
+class CatalogCacheTests(TestCase):
+
+    def test_category_menu_cache_is_invalidated_on_change(self):
+        from shop.cache import get_category_tree
+        from shop.models import Category
+        Category.objects.create(title='Phones', slug='phones', position=1)
+        self.assertEqual([c.slug for c in get_category_tree()], ['phones'])
+        with self.assertNumQueries(0):
+            get_category_tree()  # served from the cache
+        Category.objects.create(title='Laptops', slug='laptops', position=2)
+        self.assertEqual(sorted(c.slug for c in get_category_tree()), ['laptops', 'phones'])
