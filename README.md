@@ -95,7 +95,35 @@ Emails are printed to the console unless `EMAIL_BACKEND` and the SMTP
 settings in `.env` point somewhere real.
   
 ## Features
- rest api using drf,
- jwt authentications,
- django templates,
- html and css
+- **Shop** (Django templates): categories (nested menu), search, product
+  pages, cart, checkout with Zarinpal payment, order history.
+- **Account**: sign up (logs you straight in), log in, profile with
+  shipping details (pre-fills checkout), change password, "forgot
+  password" email reset.
+- **Manager panel** (`/manage/`, staff only): dashboard (stock, orders,
+  customers, revenue, recent orders), products, categories, orders,
+  customers (search, order/payment history, block / unblock) and payments.
+- **REST API** with DRF + JWT (see API Docs above).
+- **Caching** of the category menu and catalogue API responses, invalidated
+  automatically when products or categories change.
+
+## Cache (Redis / PythonAnywhere)
+
+The cache backend is one setting, `CACHE_BACKEND` in `.env`:
+
+| Value | Backend | When to use |
+|---|---|---|
+| `redis` | Redis at `REDIS_URL` | Docker (`docker compose up` starts a `redis` service and sets `REDIS_URL`) |
+| `file` | Django file cache in `CACHE_DIR` | **PythonAnywhere** (no Redis there; shared by all web workers) |
+| `db` | Django database cache | run `python manage.py createcachetable` once |
+| `locmem` | Django in-process cache | local development |
+| `dummy` | no caching | debugging |
+
+Leave it empty and it picks `redis` when `REDIS_URL` is set, `locmem`
+otherwise. If Redis goes down the site keeps working, just uncached.
+On PythonAnywhere put these in the WSGI file (or `.env`):
+
+```sh
+CACHE_BACKEND=file
+CACHE_DIR=/home/<your-username>/ProductKrait/.cache
+```
