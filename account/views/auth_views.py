@@ -51,3 +51,13 @@ class ProfileView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, 'Your profile has been saved.')
         return super().form_valid(form)
+
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'Account/password_change.html'
+    form_class = CustomPasswordChangeForm
+    success_url = reverse_lazy('account:profile')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your password has been changed.')
+        return super().form_valid(form)
