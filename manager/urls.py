@@ -26,4 +26,5 @@ urlpatterns = [
     path('customers/<int:pk>/', views.CustomerDetailView.as_view(), name='customer-detail'),
     path('customers/<int:pk>/toggle-active/', views.CustomerToggleActiveView.as_view(), name='customer-toggle-active'),
 
+    path('payments/', views.PaymentListView.as_view(), name='payments'),
 ]

@@ -239,3 +239,24 @@ class CustomerToggleActiveView(StaffRequiredMixin, View):
             state = 'unblocked' if customer.is_active else 'blocked'
             messages.success(request, f'{customer.email} {state}.')
         return redirect('manager:customer-detail', pk=pk)
+
+
+class PaymentListView(StaffRequiredMixin, ListView):
+    template_name = 'manager/payment_list.html'
+    context_object_name = 'payments'
+    paginate_by = 20
+
+    def get_queryset(self):
+        qs = Payment.objects.select_related('user').order_by('-created_at')
+        self.status = self.request.GET.get('status', '')
+        if self.status in dict(Payment.STATUS_CHOICES):
+            qs = qs.filter(status=self.status)
+        q = self.request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(Q(user__email__icontains=q) | Q(payment_number__icontains=q))
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx.update(q=self.request.GET.get('q', ''), status=self.status, statuses=Payment.STATUS_CHOICES)
+        return ctx
