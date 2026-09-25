@@ -13,29 +13,6 @@ from .payment_views import go_to_gateway_view
 from django.conf import settings
 import json
 
-class CartView(LoginRequiredMixin, ListView):
-    model = CartItem
-    template_name = 'shop/cart.html'
-    context_object_name = 'cart_items'
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.cart_repository = CartRepository()
-
-    def get_queryset(self):
-        cart = self.cart_repository.get_by_user(self.request.user.id)
-        if cart:
-            return cart.items.all()
-        return CartItem.objects.none()
-
-    def get_context_data(self, **kwargs) -> Dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        cart = self.cart_repository.get_by_user(self.request.user.id)
-        if cart:
-            context['cart'] = cart
-            context['total'] = self.cart_repository.get_cart_total(cart.id)
-        return context
-
 class AddToCartView(LoginRequiredMixin, View):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
