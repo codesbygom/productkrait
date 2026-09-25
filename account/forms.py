@@ -24,7 +24,9 @@ class UserUpdateForm(forms.ModelForm):
     """Form for updating user profile."""
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email', 'phone', 'city', 'zipcode', 'address')
+        widgets = {'address': forms.Textarea(attrs={'rows': 2})}
+        help_texts = {'address': 'Used to pre-fill the shipping address at checkout.'}
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
