@@ -37,3 +37,6 @@ images
 !static/shop/images/
 !static/shop/images/logo/
 !static/shop/images/logo/**staticfiles/
+
+# file-based cache (CACHE_BACKEND=file)
+.cache/

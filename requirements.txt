@@ -11,6 +11,7 @@ django-braces
 django-cors-headers
 django-crispy-forms
 django-model-utils
+django-redis
 django-templated-mail
 django-widget-tweaks
 djangorestframework
@@ -26,6 +27,7 @@ PyJWT
 python-dotenv
 python3-openid
 pytz
+redis
 PyYAML
 requests
 requests-oauthlib

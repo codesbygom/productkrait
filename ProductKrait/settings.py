@@ -221,3 +221,54 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False') == 'True'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'no-reply@productkrait.local')
+
+
+# Cache backend, picked with CACHE_BACKEND:
+#   redis  -> Redis at REDIS_URL (the `redis` service in docker-compose.yml)
+#   file   -> Django's FileBasedCache in CACHE_DIR; shared by every worker
+#             process, so this is the one to use on PythonAnywhere
+#   db     -> Django's DatabaseCache (run `manage.py createcachetable` once)
+#   locmem -> Django's in-process LocMemCache (per process, fine for dev)
+#   dummy  -> no caching at all
+# Left unset it is "redis" when REDIS_URL is set and "locmem" otherwise.
+REDIS_URL = os.environ.get('REDIS_URL')
+CACHE_BACKEND = (os.environ.get('CACHE_BACKEND') or ('redis' if REDIS_URL else 'locmem')).lower()
+CACHE_TIMEOUT = int(os.environ.get('CACHE_TIMEOUT') or 300)
+
+_CACHE_BACKENDS = {
+    'redis': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL or 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            # a Redis outage degrades to "no cache" instead of 500 errors
+            'IGNORE_EXCEPTIONS': True,
+        },
+    },
+    'file': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.environ.get('CACHE_DIR') or os.path.join(BASE_DIR, '.cache'),
+    },
+    'db': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    },
+    'locmem': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'productkrait',
+    },
+    'dummy': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+}
+if CACHE_BACKEND not in _CACHE_BACKENDS:
+    raise ValueError(f'CACHE_BACKEND must be one of {", ".join(_CACHE_BACKENDS)}, not {CACHE_BACKEND!r}')
+
+CACHES = {
+    'default': {
+        **_CACHE_BACKENDS[CACHE_BACKEND],
+        'TIMEOUT': CACHE_TIMEOUT,
+        'KEY_PREFIX': 'productkrait',
+    }
+}
+DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
