@@ -7,6 +7,23 @@
   <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ category_count }}</span>Categories</div></div>
   <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ order_count }}</span>Orders</div></div>
   <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ pending_orders }}</span>Awaiting payment</div></div>
+  <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ customer_count }}</span>Customers</div></div>
+  <div class="col-6 col-lg-3"><div class="mgr-stat"><span>{{ revenue|floatformat:0 }}</span>Revenue (Toman)</div></div>
+</div>
+<div class="card">
+  <div class="card-header"><strong>Recent orders</strong> <a class="float-right" href="{% url 'manager:orders' %}">All orders</a></div>
+  <div class="card-body table-responsive p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>#</th><th>Placed</th><th>Customer</th><th>Status</th><th>Total</th></tr></thead>
+      <tbody>
+      {% for o in recent_orders %}
+        <tr><td><a href="{% url 'manager:order-detail' o.pk %}">#{{ o.pk }}</a></td><td>{{ o.created_at|date:"Y/m/d H:i" }}</td><td>{{ o.user.email }}</td><td>{{ o.get_status_display }}</td><td>{{ o.total_price }} Toman</td></tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted p-3">No orders yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 <div class="card">
   <div class="card-header"><strong>Low stock</strong> <small class="text-muted">({{ low_stock_limit }} or fewer left)</small></div>

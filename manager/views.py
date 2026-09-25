@@ -1,16 +1,21 @@
 from django.contrib import messages
 from django.contrib.auth.views import LoginView, LogoutView
-from django.db.models import Q
+from django.db.models import Count, Q, Sum
+from django.shortcuts import get_object_or_404, redirect
+from django.views import View
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
 from shop.forms import CategoryForm, OrderUpdateForm, ProductForm
-from shop.models import Category, Order, OrderItem, Product
+from account.models import User
+from shop.models import Category, Order, OrderItem, Payment, Product
 
 from .forms import StaffAuthenticationForm
 from .mixins import StaffRequiredMixin
 
 LOW_STOCK = 5
+# orders that never turned into money
+PENDING_OR_CANCELLED = ('pending', 'cancelled')
 
 
 class ManagerLoginView(LoginView):
@@ -39,6 +44,9 @@ class DashboardView(StaffRequiredMixin, TemplateView):
             pending_orders=Order.objects.filter(status='pending').count(),
             low_stock=Product.objects.filter(quantity__lte=LOW_STOCK).order_by('quantity')[:8],
             low_stock_limit=LOW_STOCK,
+            customer_count=User.objects.filter(is_staff=False).count(),
+            revenue=Order.objects.exclude(status__in=PENDING_OR_CANCELLED).aggregate(total=Sum('total_price'))['total'] or 0,
+            recent_orders=Order.objects.select_related('user').order_by('-created_at')[:5],
         )
         return ctx
 
