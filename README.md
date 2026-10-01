@@ -1,8 +1,21 @@
 # ProductKrait — Django E-Commerce With RestApi using DRF and JWT authentication
 
 <p align="center">
-  <img src="static/shop/images/logo/productkrait-logo-transparent.png" alt="ProductKrait" width="500">
+  <img src="backend/static/shop/images/logo/productkrait-logo-transparent.png" alt="ProductKrait" width="500">
 </p>
+
+## Project layout
+
+```
+backend/    Django project (shop, account, manager panel, DRF + JWT API, Docker)
+frontend/   Next.js app that uses the backend API (see frontend/.env.example)
+```
+
+Every backend command below is run from the `backend/` folder. The frontend:
+
+```sh
+$ cd frontend && npm install && npm run dev
+```
 
 ## Setup
 
@@ -10,6 +23,7 @@ The first thing to do is to clone the repository:
 
 ```sh
 $ git clone https://github.com/codesbygom/ProductKrait.git
+$ cd ProductKrait/backend
 ```
 
 Create a virtual environment to install dependencies in and activate it:
