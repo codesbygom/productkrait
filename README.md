@@ -26,23 +26,28 @@ $ git clone https://github.com/codesbygom/ProductKrait.git
 $ cd ProductKrait/backend
 ```
 
+You need Python 3.13 (the same version the Docker image uses). On Windows,
+get it with the official
+[Python Install Manager](https://www.python.org/downloads/windows/)
+(`py install 3.13`).
+
 Create a virtual environment to install dependencies in and activate it:
 
 ```sh
-$ virtualenv env
-$ source env/Scripts/activate
+$ py -V:3.13 -m venv venv           # macOS/Linux: python3.13 -m venv venv
+$ venv\Scripts\activate             # macOS/Linux: source venv/bin/activate
 ```
 
 Then install the dependencies:
 
 ```sh
-(env)$ pip install -r requirements.txt
+(venv)$ pip install -r requirements.txt
 ```
 
 
 Once `pip` has finished downloading the dependencies:
 ```sh
-(env)$ python manage.py runserver
+(venv)$ python manage.py runserver
 
 ```
 And navigate to `http://127.0.0.1:8000/`.
@@ -75,7 +80,7 @@ $ cp .env.example .env
 
 To run the tests, `cd` into the directory where `manage.py` is:
 ```sh
-(env)$ python manage.py test
+(venv)$ python manage.py test
 
 ```
 ## API Docs 
