@@ -1,0 +1,130 @@
+  /* Only force the fixed sidebar width/offset on desktop. Below 992px this
+     was overriding AdminLTE's own off-canvas sidebar behavior with
+     !important, which is why the hamburger (pushmenu) toggle looked broken
+     on narrow screens: the content was always shoved right by 280px and
+     the sidebar never actually got out of the way. */
+  @media (min-width: 992px) {
+    .sidebar {
+      width: 280px !important;
+    }
+    .main-sidebar {
+      width: 280px !important;
+    }
+    .content-wrapper {
+      margin-left: 280px !important;
+    }
+    .main-header {
+      margin-left: 280px !important;
+    }
+
+    /* When the hamburger (pushmenu) collapses the sidebar, AdminLTE expects
+       it to shrink to an icon-only rail and the content to follow. The
+       280px rules above were unconditional and outweighed that, so the
+       "collapsed" sidebar stayed full width and just sat under the
+       content instead of visibly closing. */
+    .sidebar-collapse .main-sidebar {
+      width: 4.6rem !important;
+    }
+    .sidebar-collapse .content-wrapper,
+    .sidebar-collapse .main-header {
+      margin-left: 4.6rem !important;
+    }
+  }
+  .nav-sidebar .nav-item .nav-link {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+  }
+  .nav-sidebar .nav-item .nav-link p {
+    margin-left: 0.5rem;
+  }
+
+  /* Match the krait black/cream buttons used on the rest of the site
+     instead of AdminLTE's default blue/green/red. */
+  .btn-primary,
+  .btn-secondary,
+  .btn-success,
+  .btn-danger,
+  .btn-info,
+  .btn-warning {
+    background: linear-gradient(180deg, #33383c 0%, #1c1f22 55%, #101214 100%) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+    color: #f0ead6 !important;
+    border-radius: 10px !important;
+  }
+
+  .btn-primary:hover, .btn-primary:focus,
+  .btn-secondary:hover, .btn-secondary:focus,
+  .btn-success:hover, .btn-success:focus,
+  .btn-danger:hover, .btn-danger:focus,
+  .btn-info:hover, .btn-info:focus,
+  .btn-warning:hover, .btn-warning:focus {
+    background: linear-gradient(180deg, #3d4247 0%, #24282b 55%, #16181a 100%) !important;
+    color: #f0ead6 !important;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Same black/cream krait palette as the shop navbar and the login/signup
+     cards, applied to the admin panel's topbar, sidebar and page body. */
+  .krait-admin-navbar {
+    background: linear-gradient(180deg, #131517 0%, #0a0b0c 60%, #000000 100%) !important;
+  }
+
+  .main-sidebar {
+    background: linear-gradient(180deg, #1c1f22 0%, #0a0c0e 65%, #000000 100%) !important;
+  }
+
+  /* Pin "Log out" to the true bottom of the sidebar: without the brand-link
+     row up top, the sidebar now starts at the user panel, and the nav list
+     needs to stretch the full sidebar height for mt-auto on the last item
+     to push it all the way down instead of just trailing after the menu. */
+  .krait-sidebar-logout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.5rem 0.5rem 1rem;
+    border-top: 1px solid rgba(240, 234, 214, 0.12);
+    background: #000;
+  }
+
+  .krait-sidebar-logout .nav-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #c2c7d0;
+    padding: 0.8rem 1rem;
+  }
+
+  .krait-sidebar-logout .nav-link:hover {
+    color: #f0ead6;
+  }
+
+  .krait-sidebar-logout .nav-link p {
+    margin: 0 0 0 0.5rem;
+  }
+
+  .sidebar-collapse .krait-sidebar-logout .nav-link p {
+    display: none;
+  }
+
+  .content-wrapper {
+    background-color: #f0ead6 !important;
+  }
+
+  .content-wrapper .form-control {
+    background-color: #fbf7ea !important;
+    border-color: #d8cfae !important;
+    color: #1a1a1a !important;
+  }
+
+  .content-wrapper .form-control:focus {
+    background-color: #fffdf6 !important;
+    border-color: #1a1a1a !important;
+    box-shadow: none !important;
+  }
