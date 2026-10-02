@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from account.models import User
-from shop.models import CartItem, Product
+from shop.models import CartItem, Order, Product
 from shop.repositories import CartRepository
 
 
@@ -55,6 +55,35 @@ class CheckoutTests(TestCase):
         self.fill_cart(500)
         response = self.client.post(reverse('shop:checkout'), {'full_name': 'x', 'phone': '1', 'address': 'y'}, follow=True)
         self.assertContains(response, 'at least 100,000 Toman')
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT, PAYMENT_BACKEND='mock', MINIMUM_ORDER_AMOUNT=1000)
+class MockPaymentTests(CheckoutTests):
+
+    def start(self):
+        self.fill_cart(200000)
+        return self.client.post(reverse('shop:checkout'), {'full_name': 'Sara', 'phone': '912', 'address': 'Street 1'})
+
+    def test_checkout_redirects_to_mock_bank(self):
+        self.assertRedirects(self.start(), reverse('mock-payment'))
+        self.assertContains(self.client.get(reverse('mock-payment')), '200,000')
+
+    def test_paying_places_the_order_once(self):
+        self.start()
+        response = self.client.post(reverse('mock-payment-result'), {'result': 'success'})
+        self.assertRedirects(response, reverse('shop:success'))
+        self.assertEqual(Order.objects.filter(user=self.user).count(), 1)
+        # the pending payment is consumed, so replaying the POST can't double-charge
+        self.assertEqual(self.client.post(reverse('mock-payment-result'), {'result': 'success'}).status_code, 404)
+
+    def test_failing_keeps_the_cart_and_places_no_order(self):
+        self.start()
+        response = self.client.post(reverse('mock-payment-result'), {'result': 'fail'})
+        self.assertRedirects(response, reverse('shop:failure'))
+        self.assertFalse(Order.objects.filter(user=self.user).exists())
+
+    def test_mock_bank_needs_a_pending_payment(self):
+        self.assertEqual(self.client.get(reverse('mock-payment')).status_code, 404)
 
 
 class CatalogCacheTests(TestCase):

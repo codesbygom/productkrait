@@ -34,6 +34,9 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h]
 
+# e.g. https://<your-username>.pythonanywhere.com (needed for HTTPS form posts)
+CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if o]
+
 LOGIN_URL = "account:login"
 
 LOGIN_REDIRECT_URL = "account:profile"
@@ -176,6 +179,13 @@ AZ_IRANIAN_BANK_GATEWAYS = {
     "CUSTOM_APP": None,  
 }
 
+# Payment gateway: 'mock' = built-in fake bank page (free, no account, works on
+# PythonAnywhere where outbound calls to Zarinpal are blocked); 'zarinpal' =
+# the real gateway through azbankgateways.
+PAYMENT_BACKEND = os.environ.get('PAYMENT_BACKEND', 'mock').lower()
+if PAYMENT_BACKEND not in ('mock', 'zarinpal'):
+    raise ValueError(f"PAYMENT_BACKEND must be 'mock' or 'zarinpal', not {PAYMENT_BACKEND!r}")
+
 MINIMUM_ORDER_AMOUNT = int(os.environ.get("MINIMUM_ORDER_AMOUNT", "100000"))
 
 # Static files (CSS, JavaScript, Images)
@@ -272,3 +282,20 @@ CACHES = {
     }
 }
 DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
+
+
+# Production hardening: only active when DJANGO_DEBUG=False (e.g. on
+# PythonAnywhere), so local development is unaffected.
+if not DEBUG:
+    from django.core.exceptions import ImproperlyConfigured
+    if 'insecure' in SECRET_KEY:
+        raise ImproperlyConfigured('Set DJANGO_SECRET_KEY to a real random value when DJANGO_DEBUG=False.')
+    if not ALLOWED_HOSTS:
+        raise ImproperlyConfigured('Set DJANGO_ALLOWED_HOSTS when DJANGO_DEBUG=False.')
+    # PythonAnywhere terminates TLS in front of the app and forwards this header.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = os.environ.get('DJANGO_SSL_REDIRECT', 'True') == 'True'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Raise once HTTPS works (e.g. 31536000); HSTS is hard to undo, so opt-in.
+    SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_HSTS_SECONDS') or 0)

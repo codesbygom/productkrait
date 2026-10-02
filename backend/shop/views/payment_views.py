@@ -1,8 +1,11 @@
 import logging
+import secrets
 from django.urls import reverse
 from azbankgateways import bankfactories, models as bank_models, default_settings as settings
 from azbankgateways.exceptions import AZBankGatewaysException
+from django.conf import settings as django_settings
 from django.http import HttpResponse, Http404
+from django.views.decorators.http import require_POST
 from shop.models import Cart, Order, OrderItem
 from shop.models import Payment
 from django.contrib import messages
@@ -17,6 +20,14 @@ def go_to_gateway_view(request):
     cart_repository = CartRepository()
     cart = cart_repository.get_active_cart(request.user)
     total_price = cart.total_price
+
+    if django_settings.PAYMENT_BACKEND == 'mock':
+        # Free demo gateway for hosts that can't reach a real bank (PythonAnywhere).
+        request.session['mock_payment'] = {
+            'tracking_code': secrets.token_hex(8),
+            'amount': int(total_price),
+        }
+        return redirect('mock-payment')
 
     factory = bankfactories.BankFactory()
     try:
@@ -39,11 +50,6 @@ def go_to_gateway_view(request):
 @login_required
 def callback_gateway_view(request):
 
-    current_user = request.user
-    cart_repository = CartRepository()
-    cart = cart_repository.get_active_cart(request.user)
-
-
     tracking_code = request.GET.get(settings.TRACKING_CODE_QUERY_PARAM, None)
     if not tracking_code:
         logging.debug("This link is not valid.")
@@ -55,25 +61,52 @@ def callback_gateway_view(request):
         logging.debug("This link is not valid.")
         raise Http404
 
+    return _finish_payment(request, bank_record.tracking_code, bank_record.amount, bank_record.is_success)
+
+
+@login_required
+def mock_payment_view(request):
+    """Fake bank page: shows the amount and lets you pay or fail on purpose."""
+    pending = request.session.get('mock_payment')
+    if not pending:
+        raise Http404
+    return render(request, 'shop/mock_payment.html', {'amount': pending['amount'], 'tracking_code': pending['tracking_code']})
+
+
+@login_required
+@require_POST
+def mock_payment_result_view(request):
+    pending = request.session.pop('mock_payment', None)
+    if not pending:
+        raise Http404
+    return _finish_payment(request, pending['tracking_code'], pending['amount'], request.POST.get('result') == 'success')
+
+
+def _finish_payment(request, tracking_code, amount, is_success):
+    """Record the payment and, if it succeeded, place the order (shared by the real and mock gateways)."""
+    current_user = request.user
+    cart_repository = CartRepository()
+    cart = cart_repository.get_active_cart(request.user)
+
     # Reloading the callback page must not record the payment (or the order) twice.
-    if Payment.objects.filter(payment_number=bank_record.tracking_code, user=current_user).exists():
-        return redirect('shop:success' if bank_record.is_success else 'shop:failure')
+    if Payment.objects.filter(payment_number=tracking_code, user=current_user).exists():
+        return redirect('shop:success' if is_success else 'shop:failure')
 
     Payment.objects.create(
         user=current_user,
-        payment_number=bank_record.tracking_code,
+        payment_number=tracking_code,
         payment_method='online',
-        amount_paid=bank_record.amount if bank_record.is_success else 0,
-        status='completed' if bank_record.is_success else 'failed',
+        amount_paid=amount if is_success else 0,
+        status='completed' if is_success else 'failed',
     )
 
-    if not bank_record.is_success:
+    if not is_success:
         # The cart is kept so the customer can simply try paying again.
         messages.error(request, 'Payment failed. If an amount was deducted, it will be refunded within 48 hours.')
         return redirect('shop:failure')
 
     # The payment was completed successfully and confirmed by the bank.
-    payment = Payment.objects.get(payment_number=bank_record.tracking_code, user=current_user)
+    payment = Payment.objects.get(payment_number=tracking_code, user=current_user)
     shipping_address = request.session.pop('shipping_address', '') or current_user.address or ''
     try:
         if cart is None:
@@ -84,7 +117,7 @@ def callback_gateway_view(request):
         messages.success(request, 'Your order was placed successfully.')
         return redirect('shop:success')
     except Exception:
-        logging.exception('Could not create the order for paid tracking code %s', bank_record.tracking_code)
+        logging.exception('Could not create the order for paid tracking code %s', tracking_code)
         messages.error(request, 'Your payment was received but we could not place the order. '
-                                'Please contact support with tracking code %s.' % bank_record.tracking_code)
+                                'Please contact support with tracking code %s.' % tracking_code)
         return redirect('shop:failure')

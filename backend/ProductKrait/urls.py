@@ -24,7 +24,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from azbankgateways.urls import az_bank_gateways_urls
-from shop.views.payment_views import go_to_gateway_view, callback_gateway_view
+from shop.views.payment_views import go_to_gateway_view, callback_gateway_view, mock_payment_view, mock_payment_result_view
 
 
 schema_view = get_schema_view(
@@ -53,6 +53,10 @@ urlpatterns = [
     path('bankgateways/', az_bank_gateways_urls()),
     # path('go-to-gateways/', go_to_gateway_view, name = "go-to-gateway"),
     path('callback-gateway/', callback_gateway_view, name = "call-back-gateway"),
+
+    # free mock gateway (PAYMENT_BACKEND=mock)
+    path('mock-payment/', mock_payment_view, name='mock-payment'),
+    path('mock-payment/result/', mock_payment_result_view, name='mock-payment-result'),
 
     #drf_yasg
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),

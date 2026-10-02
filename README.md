@@ -146,3 +146,41 @@ On PythonAnywhere put these in the WSGI file (or `.env`):
 CACHE_BACKEND=file
 CACHE_DIR=/home/<your-username>/ProductKrait/.cache
 ```
+
+## Deploying to PythonAnywhere
+
+Same flow as a standard Django app (no Docker, no Redis):
+
+1. Clone the repo in a Bash console, then
+   `mkvirtualenv --python=/usr/bin/python3.13 productkrait-env && pip install -r backend/requirements.txt`.
+2. Web tab → *Add a new web app* → **Manual configuration** → Python 3.13, and set the virtualenv path.
+3. In the WSGI file, add the project to `sys.path` and set the environment before importing Django:
+
+   ```python
+   import os, sys
+   path = '/home/<your-username>/ProductKrait/backend'
+   if path not in sys.path:
+       sys.path.insert(0, path)
+   os.environ['DJANGO_SETTINGS_MODULE'] = 'ProductKrait.settings'
+   os.environ['DJANGO_SECRET_KEY'] = '<generated key>'
+   os.environ['DJANGO_DEBUG'] = 'False'
+   os.environ['DJANGO_ALLOWED_HOSTS'] = '<your-username>.pythonanywhere.com'
+   os.environ['DJANGO_CSRF_TRUSTED_ORIGINS'] = 'https://<your-username>.pythonanywhere.com'
+   os.environ['CACHE_BACKEND'] = 'file'
+   os.environ['CACHE_DIR'] = '/home/<your-username>/ProductKrait/backend/.cache'
+   os.environ['PAYMENT_BACKEND'] = 'mock'   # free fake bank page; 'zarinpal' needs a paid account
+   from django.core.wsgi import get_wsgi_application
+   application = get_wsgi_application()
+   ```
+4. `cd backend && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py createsuperuser`.
+5. Static files: `/static/` → `.../backend/staticfiles`, `/media/` → `.../backend/media`. Reload.
+
+With `DJANGO_DEBUG=False` the app refuses to start on the dev secret key or
+empty `DJANGO_ALLOWED_HOSTS`, forces HTTPS and sets secure cookies. Free
+accounts can only reach whitelisted sites, so Zarinpal can't be called there:
+this branch ships a built-in **mock payment gateway** (`PAYMENT_BACKEND=mock`,
+the default here) with a fake bank page where you choose "Pay" or "Simulate
+failure". No money, no sign-up, no outbound requests. Set
+`PAYMENT_BACKEND=zarinpal` to use the real gateway again. The Next.js `frontend/` can't run on
+PythonAnywhere: host it elsewhere (e.g. Vercel) with `BACKEND_URL` and
+`NEXT_PUBLIC_BACKEND_URL` set to the PythonAnywhere URL.
