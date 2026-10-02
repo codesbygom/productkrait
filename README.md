@@ -4,6 +4,9 @@
   <img src="backend/static/shop/images/logo/productkrait-logo-transparent.png" alt="ProductKrait" width="500">
 </p>
 
+**Live demo: [codesbygom.pythonanywhere.com](https://codesbygom.pythonanywhere.com/)**
+(hosted on PythonAnywhere's free tier; checkout uses a built-in mock bank, so no real payment happens)
+
 ## Preview
 
 ![ProductKrait overview](portfolio-previews/01-cover.png)
