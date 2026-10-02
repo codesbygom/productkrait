@@ -4,6 +4,20 @@
   <img src="backend/static/shop/images/logo/productkrait-logo-transparent.png" alt="ProductKrait" width="500">
 </p>
 
+## Preview
+
+![ProductKrait overview](portfolio-previews/01-cover.png)
+
+![Storefront, cart and checkout](portfolio-previews/02-storefront.png)
+
+![Store manager panel](portfolio-previews/03-manager-panel.png)
+
+![Customer accounts](portfolio-previews/04-accounts.png)
+
+![JWT REST API with Swagger docs](portfolio-previews/05-rest-api.png)
+
+![Next.js frontend](portfolio-previews/06-nextjs-frontend.png)
+
 ## Project layout
 
 ```
