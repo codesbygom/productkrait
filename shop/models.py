@@ -84,7 +84,8 @@ class Product(models.Model):
         verbose_name_plural='Products'
 
     def get_absolute_url(self):
-        first_category = self.category.first()
+        # .all() reuses prefetch_related('category'); .first() would re-query
+        first_category = next(iter(self.category.all()), None)
         if first_category:
             return f'/{first_category.slug}/{self.slug}/'
         return f'/{self.slug}/'
@@ -366,6 +367,7 @@ class Payment(models.Model):
     )
     payment_number = models.CharField(
         max_length=100,
+        unique=True,
         verbose_name='Payment number'
     )
     payment_method = models.CharField(

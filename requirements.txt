@@ -37,3 +37,4 @@ typing_extensions
 tzdata
 uritemplate
 urllib3
+psycopg[binary]

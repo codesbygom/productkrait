@@ -2,6 +2,7 @@ import logging
 from django.urls import reverse
 from azbankgateways import bankfactories, models as bank_models, default_settings as settings
 from azbankgateways.exceptions import AZBankGatewaysException
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse, Http404
 from shop.models import Cart, Order, OrderItem
 from shop.models import Payment
@@ -52,35 +53,48 @@ def callback_gateway_view(request):
         logging.debug("This link is not valid.")
         raise Http404
 
-    # Use the data available on the bank record to create the corresponding
-    # record or perform whatever action is appropriate.
+    # Idempotency: the bank (or a browser refresh) may hit this callback more
+    # than once for the same tracking code -- never create a second payment/order.
+    existing = Payment.objects.filter(payment_number=bank_record.tracking_code).first()
+    if existing:
+        if Order.objects.filter(payment=existing).exists():
+            return redirect('shop:success')
+        return redirect('shop:failure')
+
     if bank_record.is_success:
         shipping_address = request.session.pop('shipping_address', '')
         if not shipping_address:
             messages.error(request, 'Please enter a shipping address.')
             return redirect('shop:checkout')
 
-        new_payment = Payment()
-        new_payment.user = current_user
-        new_payment.payment_number = bank_record.tracking_code
-        new_payment.payment_method = bank_record.bank_type
-        new_payment.amount_paid = bank_record.amount
-        new_payment.status = bank_record.status
-        new_payment.save()
-        # The payment was completed successfully and confirmed by the bank.
-        # You can redirect the user to a result page or display the result.
         try:
-            order = cart_repository.create_order(cart, shipping_address)
-            order.payment = new_payment
-            order.save()
-            messages.success(request, 'Your order was placed successfully.')
-            cart_repository.clear_cart(cart)
+            # Money is already taken: record the payment first, in its own
+            # transaction, so it survives even if order creation fails below.
+            new_payment = Payment.objects.create(
+                user=current_user,
+                payment_number=bank_record.tracking_code,
+                payment_method=bank_record.bank_type,
+                amount_paid=bank_record.amount,
+                status=bank_record.status,
+            )
+        except IntegrityError:
+            # A concurrent callback won the race on the unique payment_number.
             return redirect('shop:success')
-        except Exception as e:
-            cart_repository.clear_cart(cart)
+
+        try:
+            with transaction.atomic():
+                order = cart_repository.create_order(cart, shipping_address)
+                order.payment = new_payment
+                order.save(update_fields=['payment'])
+        except Exception:
+            # Paid but no order: keep the cart and leave the payment for
+            # reconciliation/refund instead of silently dropping it.
+            logging.exception("Order creation failed for paid payment %s", new_payment.payment_number)
             messages.error(request, 'System error while placing the order. Please contact support.')
             return redirect('shop:failure')
+
+        messages.success(request, 'Your order was placed successfully.')
+        return redirect('shop:success')
     else:
-        cart_repository.clear_cart(cart)
         messages.error(request, 'Payment failed. If an amount was deducted, it will be refunded within 48 hours.')
         return redirect('shop:failure')

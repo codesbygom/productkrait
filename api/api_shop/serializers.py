@@ -24,7 +24,10 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_thumbnail(self, obj):
-        return obj.get_thumbnail() if obj.image else None
+        # Read-only: never generate/save a thumbnail inside a GET request
+        if obj.thumbnail:
+            return obj.thumbnail.url
+        return obj.image.url if obj.image else None
 
 
 class CategorySerializer(serializers.ModelSerializer):

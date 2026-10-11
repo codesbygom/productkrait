@@ -2,6 +2,7 @@ from typing import Optional, List, Tuple
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django.db.models import F
 from .base_repository import BaseRepository
 from shop.models import Cart, CartItem, Product, Order, OrderItem
 
@@ -88,8 +89,9 @@ class CartRepository(BaseRepository[Cart]):
         )
         
         if not created:
-            cart_item.quantity += quantity
-            cart_item.save()
+            # F(): increment in the DB, not read-modify-write in Python
+            CartItem.objects.filter(pk=cart_item.pk).update(quantity=F('quantity') + quantity)
+            cart_item.refresh_from_db(fields=['quantity'])
         
         return cart_item, created
 
@@ -127,8 +129,14 @@ class CartRepository(BaseRepository[Cart]):
                 raise ValueError("Cart is empty or inactive")
             
             # Check product quantities before creating order
-            for item in cart.items.all():
-                product = Product.objects.select_for_update().get(id=item.product.id)
+            items = list(cart.items.select_related('product'))
+            # Lock all products in one query, in a stable order (avoids deadlocks)
+            products = {
+                p.id: p for p in Product.objects.select_for_update()
+                .filter(id__in=[i.product_id for i in items]).order_by('id')
+            }
+            for item in items:
+                product = products[item.product_id]
                 if product.quantity < item.quantity:
                     raise ValueError(f"Insufficient quantity for product: {product.title}")
             
@@ -141,20 +149,12 @@ class CartRepository(BaseRepository[Cart]):
             )
             
             # Create order items and update product quantities
-            for item in cart.items.all():
-                product = Product.objects.select_for_update().get(id=item.product.id)
-                
-                # Create order item
-                OrderItem.objects.create(
-                    order=order,
-                    product=product,
-                    quantity=item.quantity,
-                    price=item.price
-                )
-                
-                # Update product quantity
-                product.quantity -= item.quantity
-                product.save()
+            OrderItem.objects.bulk_create([
+                OrderItem(order=order, product_id=item.product_id, quantity=item.quantity, price=item.price)
+                for item in items
+            ])
+            for item in items:
+                Product.objects.filter(id=item.product_id).update(quantity=F('quantity') - item.quantity)
             
             # Clear cart
             self.clear_cart(cart)

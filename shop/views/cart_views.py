@@ -12,6 +12,9 @@ from shop.models import Product
 from .payment_views import go_to_gateway_view
 from django.conf import settings
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CartView(LoginRequiredMixin, ListView):
     model = CartItem
@@ -63,8 +66,9 @@ class AddToCartView(LoginRequiredMixin, View):
                 messages.success(request, 'Product added to cart')
                 return redirect('shop:checkout')
 
-        except Exception as e:
-            messages.error(request, f'System error: {str(e)}')
+        except Exception:
+            logger.exception("Cart operation failed")  # details to logs, not to the user
+            messages.error(request, 'System error. Please try again.')
             return redirect('shop:detail', id=product_id)
 
 class UpdateCartView(LoginRequiredMixin, View):
@@ -74,33 +78,37 @@ class UpdateCartView(LoginRequiredMixin, View):
 
     def post(self, request, product_id):
         try:
-            cart = self.cart_repository.get_or_create_cart(request.user)
-            quantity = int(request.POST.get('quantity', 0))
-            
-            if quantity <= 0:
-                if self.cart_repository.remove_item(cart, product_id):
-                    messages.success(request, 'Product removed from cart.')
-                else:
-                    messages.error(request, 'Error removing the product from the cart.')
-                return redirect('shop:checkout')
+            return self._update(request, product_id)
+        except Exception:
+            logger.exception("Cart update failed")
+            messages.error(request, 'System error. Please try again.')
+            return redirect('shop:checkout')
 
-            product = Product.objects.select_for_update().get(id=product_id)
-
-            if quantity > product.quantity:
-                messages.error(request, 'Not enough stock available.')
-                return redirect('shop:checkout')
-
-            cart_item = self.cart_repository.update_item_quantity(cart, product_id, quantity)
-            if cart_item:
-                messages.success(request, 'Cart updated.')
+    @transaction.atomic  # select_for_update below needs an open transaction
+    def _update(self, request, product_id):
+        cart = self.cart_repository.get_or_create_cart(request.user)
+        quantity = int(request.POST.get('quantity', 0))
+        
+        if quantity <= 0:
+            if self.cart_repository.remove_item(cart, product_id):
+                messages.success(request, 'Product removed from cart.')
             else:
-                messages.error(request, 'Error updating the cart.')
-
+                messages.error(request, 'Error removing the product from the cart.')
             return redirect('shop:checkout')
 
-        except Exception as e:
-            messages.error(request, f'System error: {str(e)}')
+        product = Product.objects.select_for_update().get(id=product_id)
+
+        if quantity > product.quantity:
+            messages.error(request, 'Not enough stock available.')
             return redirect('shop:checkout')
+
+        cart_item = self.cart_repository.update_item_quantity(cart, product_id, quantity)
+        if cart_item:
+            messages.success(request, 'Cart updated.')
+        else:
+            messages.error(request, 'Error updating the cart.')
+
+        return redirect('shop:checkout')
 
 class RemoveFromCartView(LoginRequiredMixin, View):
     def __init__(self, **kwargs):
@@ -116,8 +124,9 @@ class RemoveFromCartView(LoginRequiredMixin, View):
                 messages.error(request, 'Error removing the product from the cart.')
             return redirect('shop:checkout')
 
-        except Exception as e:
-            messages.error(request, f'System error: {str(e)}')
+        except Exception:
+            logger.exception("Cart operation failed")  # details to logs, not to the user
+            messages.error(request, 'System error. Please try again.')
             return redirect('shop:checkout')
 
 class CheckoutView(LoginRequiredMixin, TemplateView):
@@ -133,7 +142,7 @@ class CheckoutView(LoginRequiredMixin, TemplateView):
         cart = self.cart_repository.get_active_cart(self.request.user)
         
         if cart and cart.items.exists():
-            context['cart_items'] = cart.items.all()
+            context['cart_items'] = cart.items.select_related('product')
             context['total'] = cart.total_price
             context['is_empty'] = False
         else:
