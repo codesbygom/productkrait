@@ -9,6 +9,28 @@ from .imaging import PRODUCT_THUMBNAIL_SIZE
 from .upload import UUIDUploadTo
 
 
+class CategoryQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(status=True)
+
+    def roots(self):
+        return self.filter(parent__isnull=True)
+
+
+class ProductQuerySet(models.QuerySet):
+    def search(self, query):
+        return self.filter(title__icontains=query)
+
+    def in_category(self, category):
+        """Products in the category or any of its descendants."""
+        categories = [category, *category.get_all_children()]
+        return self.filter(category__in=categories).distinct()
+
+
+class CartQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
+
 
 class Category(models.Model):
     title    = models.CharField(max_length=200 , verbose_name="Category",)
@@ -16,6 +38,8 @@ class Category(models.Model):
     status   = models.BooleanField(default=True , verbose_name="Show?",)
     position = models.IntegerField(verbose_name='Position')
     parent   = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', verbose_name='Parent category')
+
+    objects = CategoryQuerySet.as_manager()
 
     class Meta:
         ordering = ['title',]
@@ -75,6 +99,8 @@ class Product(models.Model):
     date_added     = models.DateTimeField(auto_now_add=True)
     quantity       = models.IntegerField(default=0)
 
+    objects = ProductQuerySet.as_manager()
+
     def __str__(self):
         return self.title
 
@@ -125,6 +151,8 @@ class Cart(models.Model):
         default=True,
         verbose_name='Active'
     )
+
+    objects = CartQuerySet.as_manager()
 
     class Meta:
         verbose_name = 'Cart'

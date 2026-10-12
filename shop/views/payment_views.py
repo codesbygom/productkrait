@@ -8,13 +8,12 @@ from shop.models import Cart, Order, OrderItem
 from shop.models import Payment
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
-from shop.repositories import CartRepository
+from shop import services
 
 def go_to_gateway_view(request):
 
     # Read the amount from wherever is relevant
-    cart_repository = CartRepository()
-    cart = cart_repository.get_active_cart(request.user)
+    cart = services.get_active_cart(request.user)
     total_price = cart.total_price
 
     factory = bankfactories.BankFactory()
@@ -31,15 +30,13 @@ def go_to_gateway_view(request):
         return bank.redirect_gateway()
     except AZBankGatewaysException as e:
         logging.critical(e)
-        # cart_repository.clear_cart(cart)
         messages.error(request, 'System error while redirecting to the bank gateway...')
         return redirect('shop:checkout')
 
 def callback_gateway_view(request):
 
     current_user = request.user
-    cart_repository = CartRepository()
-    cart = cart_repository.get_active_cart(request.user)
+    cart = services.get_active_cart(request.user)
 
 
     tracking_code = request.GET.get(settings.TRACKING_CODE_QUERY_PARAM, None)
@@ -83,7 +80,7 @@ def callback_gateway_view(request):
 
         try:
             with transaction.atomic():
-                order = cart_repository.create_order(cart, shipping_address)
+                order = services.create_order_from_cart(cart, shipping_address)
                 order.payment = new_payment
                 order.save(update_fields=['payment'])
         except Exception:

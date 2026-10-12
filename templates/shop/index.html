@@ -52,12 +52,12 @@
     {% endif %}
 </div>
 
-{% if product_obj.has_other_pages %}
+{% if page_obj.has_other_pages %}
     <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination justify-content-center">
-            {% if product_obj.has_previous %}
+            {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ product_obj.previous_page_number }}" aria-label="Previous">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -69,8 +69,8 @@
                 </li>
             {% endif %}
 
-            {% for i in product_obj.paginator.page_range %}
-                {% if product_obj.number == i %}
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
                     <li class="page-item active">
                         <a class="page-link" href="#">{{ i }}</a>
                     </li>
@@ -81,9 +81,9 @@
                 {% endif %}
             {% endfor %}
 
-            {% if product_obj.has_next %}
+            {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ product_obj.next_page_number }}" aria-label="Next">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>

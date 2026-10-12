@@ -1,0 +1,61 @@
+# Production: gunicorn behind nginx, migrations run once before web starts.
+#   docker compose -f docker-compose.prod.yml up -d --build
+# Needs a .env with at least DJANGO_SECRET_KEY, DJANGO_ALLOWED_HOSTS and POSTGRES_PASSWORD.
+
+x-db-env: &db-env
+  POSTGRES_DB: ${POSTGRES_DB:-productkrait}
+  POSTGRES_USER: ${POSTGRES_USER:-productkrait}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+
+x-app: &app
+  build: .
+  image: productkrait:latest
+  env_file: .env
+  environment:
+    <<: *db-env
+    POSTGRES_HOST: db
+    DJANGO_DEBUG: "False"
+
+services:
+  db:
+    image: postgres:17
+    environment: *db-env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  migrate:
+    <<: *app
+    command: python manage.py migrate --noinput
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    <<: *app
+    volumes:
+      - media:/app/media
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - media:/app/media:ro
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  media:

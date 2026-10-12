@@ -1,9 +1,42 @@
+# Development: runserver with live reload, code bind-mounted, Postgres in a container.
+# Production lives in docker-compose.prod.yml.
+
+x-db-env: &db-env
+  POSTGRES_DB: ${POSTGRES_DB:-productkrait}
+  POSTGRES_USER: ${POSTGRES_USER:-productkrait}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-productkrait}
+
 services:
+  db:
+    image: postgres:17
+    environment: *db-env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   web:
     build: .
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     env_file:
-      - .env
+      - path: .env
+        required: false
+    environment:
+      <<: *db-env
+      POSTGRES_HOST: db
+      RUN_MIGRATIONS: "1"
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

@@ -36,16 +36,26 @@ And navigate to `http://127.0.0.1:8000/`.
 
 ## Running Locally with Docker
 
-1.build the image:
+Development (runserver with live reload, Postgres in a container, migrations
+run on start):
 
 ```sh
-  $ docker-compose build .
+$ docker compose up --build
 ```
-2.Spin up the containers
+then view the site at http://localhost:8000/
+
+Production (gunicorn behind nginx, migrations run once by a `migrate`
+service). Set `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` and
+`POSTGRES_PASSWORD` in `.env` first:
+
 ```sh
-  $ docker-compose up
+$ docker compose -f docker-compose.prod.yml up -d --build
 ```
-then view the site at  http://localhost:8000/
+then view the site at http://localhost/
+
+Dependencies are pinned in `requirements.txt`, generated from
+`requirements.in`. To add or upgrade one, edit `requirements.in` and run
+`uv pip compile requirements.in --python-version 3.14 --python-platform x86_64-unknown-linux-gnu -o requirements.txt`.
 
 ## Walkthrough
 
